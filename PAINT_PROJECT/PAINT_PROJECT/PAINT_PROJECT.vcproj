@@ -221,6 +221,34 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="tool"
+				>
+				<File
+					RelativePath=".\CircleTool.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\LineTool.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\PencilTool.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\RectTool.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TextTool.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Tool.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="헤더 파일"
@@ -255,6 +283,34 @@
 				RelativePath=".\targetver.h"
 				>
 			</File>
+			<Filter
+				Name="tool"
+				>
+				<File
+					RelativePath=".\CircleTool.h"
+					>
+				</File>
+				<File
+					RelativePath=".\LineTool.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PencilTool.h"
+					>
+				</File>
+				<File
+					RelativePath=".\RectTool.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TextTool.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Tool.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="리소스 파일"

@@ -91,6 +91,7 @@ BEGIN
     BUTTON      ID_INSERT_CIRCLE
     BUTTON      ID_INSERT_RECT
     BUTTON      ID_INSERT_TEXT
+    BUTTON      ID_INSERT_IMAGE
     SEPARATOR
     BUTTON      ID_THINKNESS1
     BUTTON      ID_THINKNESS3
@@ -152,6 +153,7 @@ BEGIN
         MENUITEM "원",                           ID_INSERT_CIRCLE
         MENUITEM "네모",                          ID_INSERT_RECT
         MENUITEM "텍스트",                         ID_INSERT_TEXT
+        MENUITEM "이미지",                         ID_INSERT_IMAGE
     END
     POPUP "크기"
     BEGIN

@@ -55,13 +55,18 @@
 #define ID_INNERCOL_USER                32868
 #define ID_32869                        32869
 #define ID_32870                        32870
+#define ID_32871                        32871
+#define ID_                             32872
+#define ID_INSERT_IMAGE                 32873
+#define ID_BUTTON32875                  32875
+#define ID_INSERT_IMG                   32875
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
-#define _APS_NEXT_COMMAND_VALUE         32871
+#define _APS_NEXT_COMMAND_VALUE         32876
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

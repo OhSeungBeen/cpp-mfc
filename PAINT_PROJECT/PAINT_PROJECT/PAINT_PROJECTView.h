@@ -3,21 +3,11 @@
 //
 #pragma once
 
-enum
-{
-	PENCIL,
-	LINE,
-	CIRCLE,
-	RECTANGLE,
-	TEXT
-};
-
 const COLORREF BLACK = RGB(0, 0, 0);
 const COLORREF WHITE = RGB(255, 255, 255);
 const COLORREF RED = RGB(255, 0, 0);
 const COLORREF GREEN = RGB(0, 255, 0);
 const COLORREF BLUE = RGB(0, 0, 255);
-
 
 class CPAINT_PROJECTView : public CView
 {
@@ -26,16 +16,15 @@ protected: // serialization에서만 만들어집니다.
 	DECLARE_DYNCREATE(CPAINT_PROJECTView)
 
 private:
-	CPoint lButtonDownPoint; // 마우스 왼쪽클릭시 위치를 저장 할 변수
-	CPoint prePoint; // 이전 위치를 저장 할 변수
-	bool nowDraw; // 현재 선을 그리는 중인지 check 할 변수
-	int thinkness; // 선 두께 
-	COLORREF outerColor; // 색 1 (외부)
-	COLORREF innerColor; // 색 2 (내부)
-	bool isInnerColUserCheck;  // 색 1 (외부) 사용자 설정 색 Check 확인
-	bool isOuterColUserCheck; // 색 2 (내부) 사용자 설정 색 Check 확인
-	CString text;
-
+	CPoint m_startPoint; // 마우스 왼쪽클릭시 위치를 저장 할 변수
+	CPoint m_prePoint; // 이전 위치를 저장 할 변수
+	bool m_nowDraw; // 현재 선을 그리는 중인지 check 할 변수
+	int m_thinkness; // 선 두께 
+	COLORREF m_outerColor; // 색 1 (외부)
+	COLORREF m_innerColor; // 색 2 (내부)
+	bool m_isInnerColUserCheck;  // 색 1 (외부) 사용자 설정 색 Check 확인
+	bool m_isOuterColUserCheck; // 색 2 (내부) 사용자 설정 색 Check 확인
+	CString m_imgFilePath;
 // 특성입니다.
 public:
 	CPAINT_PROJECTDoc* GetDocument() const;
@@ -112,6 +101,8 @@ public:
 	afx_msg void OnInsertText();
 	afx_msg void OnUpdateInsertText(CCmdUI *pCmdUI);	
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+	afx_msg void OnInsertImage();
 };
 
 #ifndef _DEBUG  // PAINT_PROJECTView.cpp의 디버그 버전
