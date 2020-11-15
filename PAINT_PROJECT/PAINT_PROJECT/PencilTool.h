@@ -13,6 +13,6 @@ public:
 	virtual ~CPencilTool(void);
 
 	void Draw(CDC*); // 그리기 함수
-	void addPoint(CPoint point); // 점들을 추가 하는 함수( 연필이기 때문에 마우스움직일때 마다 점을 저장)
+	void AddPoint(CPoint point); // 점들을 추가 하는 함수( 연필이기 때문에 마우스움직일때 마다 점을 저장)
 	void SetProperty(int thinkness, COLORREF outerColor); // 속성 저장 함수
 };

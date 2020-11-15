@@ -13,13 +13,22 @@ void CCircleTool::Draw(CDC* pDc)
 {
 	
 	CPen pen(PS_SOLID, m_thinkness, m_outerColor); // 펜 설정
-	CBrush brush(m_innerColor); // 브러쉬 설정
-	
-	CPen* oldPen = pDc->SelectObject(&pen);
-	CBrush* oldBrush = pDc->SelectObject(&brush);
+	CBrush brush;
 
-	pDc->Ellipse(m_startPoint.x, m_startPoint.y, m_endPoint.x, m_endPoint.y); // 원 생성
-	
+	if(m_innerColor == NULL) // 투명 배경 이면
+	{
+		brush.CreateStockObject( NULL_BRUSH );
+	}
+	else // 색상 배경 이면
+	{
+		brush.CreateSolidBrush(m_innerColor);
+	}
+
+	CBrush* oldBrush = pDc->SelectObject(&brush);
+	CPen* oldPen = pDc->SelectObject(&pen);
+
+	pDc->Ellipse(m_startPoint.x, m_startPoint.y, m_endPoint.x, m_endPoint.y); // 사각형 생성
+
 	pDc->SelectObject(oldPen); // 펜 반납
 	pDc->SelectObject(oldBrush); // 브러쉬 반납
 }

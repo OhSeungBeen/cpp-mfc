@@ -86,6 +86,7 @@ IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
 IDR_MAINFRAME TOOLBAR  25, 25
 BEGIN
+    BUTTON      ID_RESET
     BUTTON      ID_INSERT_PENCIL
     BUTTON      ID_INSERT_LINE
     BUTTON      ID_INSERT_CIRCLE
@@ -105,7 +106,7 @@ BEGIN
     BUTTON      ID_OUTERCOL_BLUE
     BUTTON      ID_OUTERCOL_USER
     SEPARATOR
-    BUTTON      ID_INNERCOL_BLACK
+    BUTTON      ID_INNERCOL_TRANSPARENT
     BUTTON      ID_INNERCOL_RED
     BUTTON      ID_INNERCOL_GREEN
     BUTTON      ID_INNERCOL_BLUE
@@ -122,7 +123,7 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "파일(&F)"
     BEGIN
-        MENUITEM "새로 만들기(&N)\tCtrl+N",          ID_FILE_NEW
+        MENUITEM "새로 만들기(&N)\tCtrl+N",          ID_RESET
         MENUITEM "열기(&O)...\tCtrl+O",           ID_FILE_OPEN
         MENUITEM "저장(&S)\tCtrl+S",              ID_FILE_SAVE
         MENUITEM "다른 이름으로 저장(&A)...",           ID_FILE_SAVE_AS
@@ -175,13 +176,14 @@ BEGIN
         END
         POPUP "색 2 (내부)"
         BEGIN
-            MENUITEM "검정",                          ID_INNERCOL_BLACK
+            MENUITEM "검정",                          ID_INNERCOL_TRANSPARENT
             MENUITEM "빨강",                          ID_INNERCOL_RED
             MENUITEM "초록",                          ID_INNERCOL_GREEN
             MENUITEM "파랑",                          ID_INNERCOL_BLUE
             MENUITEM "사용자 설정",                      ID_INNERCOL_USER
         END
     END
+    MENUITEM " ",                           0
 END
 
 

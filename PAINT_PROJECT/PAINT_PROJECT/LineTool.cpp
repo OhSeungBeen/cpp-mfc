@@ -11,14 +11,14 @@ CLineTool::~CLineTool(void)
 
 void CLineTool::Draw(CDC* pDc)
 {
-	
+
 	CPen pen(PS_SOLID, m_thinkness, m_outerColor); // Ææ ¼³Á¤
 	CPen* oldPen = pDc->SelectObject(&pen);
-	
+
 	// Á÷¼±À» ±×¸°´Ù.
 	pDc->MoveTo(m_startPoint);
 	pDc->LineTo(m_endPoint);
-	
+
 	pDc->SelectObject(oldPen); // Ææ ¹Ý³³
 
 }

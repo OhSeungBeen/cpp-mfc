@@ -11,6 +11,7 @@
 #include "CircleTool.h"
 #include "RectTool.h"
 #include "TextTool.h"
+#include "ImageTool.h"
 
 class CPAINT_PROJECTDoc : public CDocument
 {
@@ -31,6 +32,7 @@ public:
 	CCircleTool* CreateCircleTool(); // 원 도구 생성 함수
 	CRectTool* CreateRectTool(); // 사각형 도구 생성 함수
 	CTextTool* CreateTextTool(); // 텍스트 도구 생성 함수
+	CImageTool* CreateImageTool(); // 이미지 도구 생성 함수
 // 작업입니다.
 public:
 
@@ -53,7 +55,6 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 	
-
 };
 
 

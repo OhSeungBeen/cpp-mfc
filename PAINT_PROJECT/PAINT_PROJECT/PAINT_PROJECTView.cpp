@@ -51,12 +51,12 @@ BEGIN_MESSAGE_MAP(CPAINT_PROJECTView, CView)
 	ON_UPDATE_COMMAND_UI(ID_OUTERCOL_BLUE, &CPAINT_PROJECTView::OnUpdateOutercolBlue)
 	ON_UPDATE_COMMAND_UI(ID_OUTERCOL_USER, &CPAINT_PROJECTView::OnUpdateOutercolUser)
 
-	ON_COMMAND(ID_INNERCOL_BLACK, &CPAINT_PROJECTView::OnInnercolBlack)
+	ON_COMMAND(ID_INNERCOL_TRANSPARENT, &CPAINT_PROJECTView::OnInnercolTransparent)
 	ON_COMMAND(ID_INNERCOL_RED, &CPAINT_PROJECTView::OnInnercolRed)
 	ON_COMMAND(ID_INNERCOL_GREEN, &CPAINT_PROJECTView::OnInnercolGreen)
 	ON_COMMAND(ID_INNERCOL_BLUE, &CPAINT_PROJECTView::OnInnercolBlue)
 	ON_COMMAND(ID_INNERCOL_USER, &CPAINT_PROJECTView::OnInnercolUser)
-	ON_UPDATE_COMMAND_UI(ID_INNERCOL_BLACK, &CPAINT_PROJECTView::OnUpdateInnercolBlack)
+	ON_UPDATE_COMMAND_UI(ID_INNERCOL_TRANSPARENT, &CPAINT_PROJECTView::OnUpdateInnercolTransparent)
 	ON_UPDATE_COMMAND_UI(ID_INNERCOL_RED, &CPAINT_PROJECTView::OnUpdateInnercolRed)
 	ON_UPDATE_COMMAND_UI(ID_INNERCOL_GREEN, &CPAINT_PROJECTView::OnUpdateInnercolGreen)
 	ON_UPDATE_COMMAND_UI(ID_INNERCOL_BLUE, &CPAINT_PROJECTView::OnUpdateInnercolBlue)
@@ -66,6 +66,7 @@ BEGIN_MESSAGE_MAP(CPAINT_PROJECTView, CView)
 	ON_UPDATE_COMMAND_UI(ID_INSERT_TEXT, &CPAINT_PROJECTView::OnUpdateInsertText)
 	ON_WM_CHAR()
 	ON_COMMAND(ID_INSERT_IMAGE, &CPAINT_PROJECTView::OnInsertImage)
+	ON_COMMAND(ID_RESET, &CPAINT_PROJECTView::OnReset)
 END_MESSAGE_MAP()
 
 // CPAINT_PROJECTView 생성/소멸
@@ -74,7 +75,7 @@ CPAINT_PROJECTView::CPAINT_PROJECTView()
 	drawMode = PENCIL; // 도구 연필로 초기화
 	m_thinkness = 1; // 선 두께 1로 초기화
 	m_outerColor = BLACK; // 색 1 (외부) 검정색으로 초기화
-	m_innerColor = BLACK; // 색 2 (내부) 하얀색으로 초기화
+	m_innerColor = NULL; // 색 2 (내부) 투명으로 초기화
 	m_isInnerColUserCheck = FALSE; // 색 1 (외부) 사용자 설정 색 Check 확인 초기화
 	m_isOuterColUserCheck = FALSE; // // 색 2 (내부) 사용자 설정 색 Check 확인 초기화
 }
@@ -93,33 +94,20 @@ BOOL CPAINT_PROJECTView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CPAINT_PROJECTView 그리기
 
-void CPAINT_PROJECTView::OnDraw(CDC* pDC)
+void CPAINT_PROJECTView::OnDraw(CDC* pDc)
 {
 	CPAINT_PROJECTDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
 	
-	CImage image;
-	HRESULT hResult = image.Load(m_imgFilePath); // 이미지 로드
-
-	if(FAILED(hResult)) // 이미지 load 실패시
-	{
-		AfxMessageBox("이미지 불러오기 실패!");
-	}
-	else
-	{
-		image.BitBlt(pDC->m_hDC, 0, 0);
-	}
-
-	
-
 	// ToolList에서 그린것을 가져와 현재까지 그린것을 다시그린다.
+	// 상속을 통해 다형성 구현
 	CPtrList* toolList = &pDoc->GetToolList();
 	POSITION pos = toolList->GetHeadPosition();
 	while(pos != NULL)
 	{
-		((Tool*)toolList->GetNext(pos))->Draw(pDC);
+		((Tool*)toolList->GetNext(pos))->Draw(pDc);
 	}
 }
 
@@ -151,12 +139,14 @@ void CPAINT_PROJECTView::OnLButtonDown(UINT nFlags, CPoint point)
 	CPAINT_PROJECTDoc* doc = GetDocument();
 	CClientDC dc(this);
 
+	HideCaret(); // 커서를 감춘다 TEXT도구 사용 후 다른 도구 사용할 경우 커서를 없애기 위해
+
 	switch (drawMode)
 	{	
 	case PENCIL:
 		{
 			CPencilTool* pencilTool = doc->CreatePencilTool(); // 연필 도구를 생성 한다.
-			pencilTool->addPoint(point); // 연필 도구 시작점을 설정 한다.
+			pencilTool->AddPoint(point); // 연필 도구 시작점을 설정 한다.
 			pencilTool->SetProperty(m_thinkness, m_outerColor); // 연필 도구 속성을 설정 한다.
 			break;
 		}
@@ -213,7 +203,17 @@ void CPAINT_PROJECTView::OnMouseMove(UINT nFlags, CPoint point)
 	CClientDC dc(this);
 
 	CPen pen(PS_SOLID, m_thinkness, m_outerColor); // 펜 설정
-	CBrush brush(m_innerColor); // 브러쉬 설정
+
+	CBrush brush; // 브러쉬 설정
+	if(m_innerColor == NULL) // 투명 배경이면
+	{
+		brush.CreateStockObject( NULL_BRUSH );
+	}
+	else // 색상 배경 이면
+	{
+		brush.CreateSolidBrush(m_innerColor);
+	}
+
 	CPen* oldPen = dc.SelectObject(&pen);
 	CBrush* oldBrush = dc.SelectObject(&brush);
 
@@ -230,7 +230,7 @@ void CPAINT_PROJECTView::OnMouseMove(UINT nFlags, CPoint point)
 				dc.MoveTo(m_prePoint);
 				dc.LineTo(point);
 				CPencilTool* pencilTool = (CPencilTool*)doc->GetTool(); // 방금 생성한 연필 도구를 꺼낸다.
-				pencilTool->addPoint(point); // 연필 도구 점을 계속 해서 추가 한다.
+				pencilTool->AddPoint(point); // 연필 도구 점을 계속 해서 추가 한다.
 				break;
 			}
 		case LINE:
@@ -450,9 +450,9 @@ void CPAINT_PROJECTView::OnUpdateOutercolUser(CCmdUI *pCmdUI)
 }
 
 // 색 2 (내부)
-void CPAINT_PROJECTView::OnInnercolBlack()
+void CPAINT_PROJECTView::OnInnercolTransparent()
 {
-	m_innerColor = BLACK;
+	m_innerColor = NULL;
 }
 
 void CPAINT_PROJECTView::OnInnercolRed()
@@ -480,9 +480,9 @@ void CPAINT_PROJECTView::OnInnercolUser()
 	}
 }
 
-void CPAINT_PROJECTView::OnUpdateInnercolBlack(CCmdUI *pCmdUI)
+void CPAINT_PROJECTView::OnUpdateInnercolTransparent(CCmdUI *pCmdUI)
 {
-	pCmdUI->SetCheck(m_innerColor == BLACK);
+	pCmdUI->SetCheck(m_innerColor == NULL);
 }
 
 void CPAINT_PROJECTView::OnUpdateInnercolRed(CCmdUI *pCmdUI)
@@ -535,6 +535,7 @@ void CPAINT_PROJECTView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 		SetCaretPos(CPoint(m_startPoint.x + textSize.cx, m_startPoint.y)); // 글자 크기만큼 커서 위치를 이동 시킨다.
 		ShowCaret();
 		
+		SetBkMode(dc, TRANSPARENT); // 배경 투명 설정
 		dc.TextOut(m_startPoint.x, m_startPoint.y, textTool->GetText()); // 글자 출력
 
 		dc.SelectObject(oldFont); // Font 반납
@@ -547,23 +548,42 @@ void CPAINT_PROJECTView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CPAINT_PROJECTView::OnInsertImage()
 {
 	CClientDC dc(this);
-
-	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, NULL);
-
+	CPAINT_PROJECTDoc* doc = GetDocument();
+	
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY); // 파일 다이얼 로그를 띄운다.
 	if(IDOK == dlg.DoModal()) //파일 다이얼로그창을 띄워 이미지 선택
 	{
-		m_imgFilePath = dlg.GetPathName(); // 선택한 파일의 절대 경로를 가져온다.
+		CString filePath = dlg.GetPathName(); // 선택한 파일의 절대 경로를 가져온다.
 		
 		CImage image;
-		HRESULT hResult = image.Load(m_imgFilePath); // 이미지 로드
+		HRESULT hResult = image.Load(filePath); // 이미지 로드
 
-		if(FAILED(hResult)) // 이미지 load 실패시
+		if(FAILED(hResult)) // 이미지 로드 실패시
 		{
-			m_imgFilePath = "";
 			AfxMessageBox("이미지 불러오기 실패!");
-			return;
+			return; // 이미지를 불러오지 못하면 이미지 도구를 생성 하지 않고 return
 		}
 
-		image.BitBlt(dc.m_hDC, 0, 0);
+		CImageTool* imageTool = doc->CreateImageTool(); // 이미지 도구를 생성한다.
+		imageTool->SetFilePath(filePath); // 생성한 이미지 도구 경로 설정
+		image.BitBlt(dc.m_hDC, 0, 0); // 이미지를 그린다.
 	}
+}
+
+// 그림판 초기화
+void CPAINT_PROJECTView::OnReset()
+{
+	CPAINT_PROJECTDoc* doc = GetDocument();
+	CPtrList* toolList = &doc->GetToolList();
+	
+	POSITION pos = toolList->GetHeadPosition();
+
+	while(pos != NULL)
+	{
+		Tool* tool = (Tool*)toolList->GetNext(pos);
+		delete tool;
+	}
+	toolList->RemoveAll();
+	
+	Invalidate(TRUE);
 }

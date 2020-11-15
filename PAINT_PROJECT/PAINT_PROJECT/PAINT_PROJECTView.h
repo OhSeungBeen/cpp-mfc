@@ -24,7 +24,6 @@ private:
 	COLORREF m_innerColor; // 색 2 (내부)
 	bool m_isInnerColUserCheck;  // 색 1 (외부) 사용자 설정 색 Check 확인
 	bool m_isOuterColUserCheck; // 색 2 (내부) 사용자 설정 색 Check 확인
-	CString m_imgFilePath;
 // 특성입니다.
 public:
 	CPAINT_PROJECTDoc* GetDocument() const;
@@ -87,12 +86,12 @@ public:
 	afx_msg void OnUpdateOutercolBlue(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateOutercolUser(CCmdUI *pCmdUI);
 
-	afx_msg void OnInnercolBlack();
+	afx_msg void OnInnercolTransparent();
 	afx_msg void OnInnercolRed();
 	afx_msg void OnInnercolGreen();
 	afx_msg void OnInnercolBlue();
 	afx_msg void OnInnercolUser();
-	afx_msg void OnUpdateInnercolBlack(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateInnercolTransparent(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateInnercolRed(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateInnercolGreen(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateInnercolBlue(CCmdUI *pCmdUI);
@@ -103,6 +102,7 @@ public:
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	afx_msg void OnInsertImage();
+	afx_msg void OnReset();
 };
 
 #ifndef _DEBUG  // PAINT_PROJECTView.cpp의 디버그 버전

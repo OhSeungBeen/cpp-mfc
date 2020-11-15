@@ -15,7 +15,8 @@ void CTextTool::Draw(CDC* pDc)
 	CFont font; // 폰트 설정
 	font.CreatePointFont(1, "Arial");
 	CFont* oldFont = pDc->SelectObject(&font);
-
+	
+	SetBkMode(*pDc, TRANSPARENT); // 배경 투명 설정
 	pDc->TextOut(m_startPoint.x, m_startPoint.y, m_text); // 텍스트 출력
 
 	pDc->SelectObject(oldFont); // Font 반납

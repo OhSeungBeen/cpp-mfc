@@ -32,7 +32,7 @@ void CPencilTool::Draw(CDC* pDc)
 }
 
 // 점들을 추가 하는 함수( 연필이기 때문에 마우스움직일때 마다 점을 저장)
-void CPencilTool::addPoint( CPoint point )
+void CPencilTool::AddPoint( CPoint point )
 {
 	m_pointList.AddTail(point);
 }

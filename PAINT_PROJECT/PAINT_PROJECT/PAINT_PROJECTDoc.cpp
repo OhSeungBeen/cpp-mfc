@@ -120,6 +120,14 @@ CTextTool* CPAINT_PROJECTDoc::CreateTextTool()
 	m_toolList.AddTail(m_tool); // 도구 리스트에 담아 놓는다.
 	return (CTextTool*)m_tool; // 생성한 원 도구 리턴
 }
+
+// 이미지 도구를 생성하는 함수
+CImageTool* CPAINT_PROJECTDoc::CreateImageTool()
+{
+	m_tool = new CImageTool(); // 텍스트 도구 생성
+	m_toolList.AddTail(m_tool); // 도구 리스트에 담아 놓는다.  
+	return (CImageTool*)m_tool; // 생성한 원 도구 리턴
+}
 #endif //_DEBUG
 
 
