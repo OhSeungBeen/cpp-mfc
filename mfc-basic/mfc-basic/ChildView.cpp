@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "mfc-basic.h"
+#include "MFCBasic.h"
 #include "ChildView.h"
 
 #ifdef _DEBUG
@@ -47,8 +47,9 @@ void CChildView::OnPaint()
 {
 	CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트
 	
-	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-	
-	// 그리기 메시지에 대해서는 CWnd::OnPaint()를 호출하지 마십시오.
+	// UI스레드를 확인하기 위해 스레드ID출력하는 코드를 추가
+	CString strTemp;
+	strTemp.Format("Current Thread ID : %d", ::GetCurrentThreadId());
+	dc.TextOut(10, 10, strTemp);
 }
 

@@ -39,6 +39,7 @@
 
 extern CWinThread*	g_pThread;
 extern CEvent		g_ExitEvent;
+extern CWinThread*	g_pUIThread;
 
 
 

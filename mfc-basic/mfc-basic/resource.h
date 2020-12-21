@@ -14,13 +14,23 @@
 #define ID_32771                        32771
 #define ID_MENU_THREAD                  32772
 #define ID_MENU_THREAD_EX               32773
+#define ID_Menu                         32774
+#define ID_Menu_CreateUIThread          32775
+#define ID_Menu_UIThread                32776
+#define ID_UITHREAD_CREATEUITHREAD      32777
+#define ID_UITHREAD_RESUMETHREAD        32778
+#define ID_UITHREAD_SUSPENDTHREAD       32779
+#define ID_UITHREAD_EXITTHREAD          32780
+#define ID_Menu_ResumeThread            32781
+#define ID_Menu_SuspendThread           32782
+#define ID_Menu_ExitThread              32783
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32774
+#define _APS_NEXT_COMMAND_VALUE         32784
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

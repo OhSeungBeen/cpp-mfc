@@ -6,6 +6,8 @@
 #include "MFCBasic.h"
 
 #include "MainFrm.h"
+#include "ThreadExDlg.h"
+#include "UIThread.h" // UIThread include
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,6 +19,11 @@ IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_WM_CREATE()
+	ON_COMMAND(ID_MENU_THREAD_EX, &CMainFrame::OnMenuThreadEx)
+	ON_COMMAND(ID_Menu_UIThread, &CMainFrame::OnMenuUithread)
+	ON_COMMAND(ID_Menu_ResumeThread, &CMainFrame::OnMenuResumethread)
+	ON_COMMAND(ID_Menu_SuspendThread, &CMainFrame::OnMenuSuspendthread)
+	ON_COMMAND(ID_Menu_ExitThread, &CMainFrame::OnMenuExitthread)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -79,3 +86,37 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 
 // CMainFrame 메시지 처리기
+
+void CMainFrame::OnMenuThreadEx()
+{
+	CThreadExDlg threadExDlg;
+	threadExDlg.DoModal();
+}
+
+void CMainFrame::OnMenuUithread()
+{
+	if(g_pUIThread != NULL)
+	{
+		AfxMessageBox("사용자 인터페이스 스레드가 실행중입니다.");
+		return;
+	}
+	g_pUIThread = AfxBeginThread(RUNTIME_CLASS(CUIThread));
+}
+
+void CMainFrame::OnMenuResumethread()
+{
+	if(g_pUIThread != NULL)
+		g_pUIThread->ResumeThread();
+}
+
+void CMainFrame::OnMenuSuspendthread()
+{
+	if(g_pUIThread != NULL)
+		g_pUIThread->SuspendThread();
+}
+
+void CMainFrame::OnMenuExitthread()
+{
+	if(g_pUIThread != NULL)
+		g_pUIThread->PostThreadMessage(WM_QUIT, NULL, NULL);
+}

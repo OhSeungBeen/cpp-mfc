@@ -78,10 +78,6 @@ IDR_MAINFRAME           ICON                    "res\\mfc-basic.ico"
 
 IDR_MAINFRAME MENU 
 BEGIN
-    POPUP "실습"
-    BEGIN
-        MENUITEM "스레드",                         ID_MENU_THREAD_EX
-    END
     POPUP "파일(&F)"
     BEGIN
         MENUITEM "새로 만들기(&N)\tCtrl+N",          ID_FILE_NEW
@@ -96,6 +92,17 @@ BEGIN
     POPUP "도움말(&H)"
     BEGIN
         MENUITEM "mfc-basic 정보(&A)...",         ID_APP_ABOUT
+    END
+    POPUP "Worker Thread"
+    BEGIN
+        MENUITEM "Worker Thread",               ID_MENU_THREAD_EX
+    END
+    POPUP "UI Thread"
+    BEGIN
+        MENUITEM "Create UI Thread",            ID_Menu_UIThread
+        MENUITEM "Resume Thread",               ID_Menu_ResumeThread
+        MENUITEM "Suspend Thread",              ID_Menu_SuspendThread
+        MENUITEM "Exit Thread",                 ID_Menu_ExitThread
     END
 END
 

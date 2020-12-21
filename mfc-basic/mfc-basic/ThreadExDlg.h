@@ -18,6 +18,5 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnMenuThreadEx();
 	afx_msg void OnBnClickedButtonRunNotepad();
 };

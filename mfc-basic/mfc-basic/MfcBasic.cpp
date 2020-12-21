@@ -8,7 +8,6 @@
 #include "MainFrm.h"
 
 #include "ChildFrm.h"
-#include "ThreadExDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,7 +19,6 @@
 BEGIN_MESSAGE_MAP(CMFCBasic, CWinApp)
 	ON_COMMAND(ID_APP_ABOUT, &CMFCBasic::OnAppAbout)
 	ON_COMMAND(ID_FILE_NEW, &CMFCBasic::OnFileNew)
-	ON_COMMAND(ID_MENU_THREAD_EX, &CMFCBasic::OnMenuThreadEx)
 END_MESSAGE_MAP()
 
 
@@ -158,8 +156,4 @@ void CMFCBasic::OnAppAbout()
 
 // CmfcbasicApp 메시지 처리기
 
-void CMFCBasic::OnMenuThreadEx()
-{
-	CThreadExDlg threadExDlg;
-	threadExDlg.DoModal();
-}
+
