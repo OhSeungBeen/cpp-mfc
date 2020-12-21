@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "afxwinappex.h"
-#include "mfc-basic.h"
+#include "MfcBasic.h"
 #include "MainFrm.h"
 
 #include "ChildFrm.h"
@@ -17,16 +17,16 @@
 
 // CmfcbasicApp
 
-BEGIN_MESSAGE_MAP(CmfcbasicApp, CWinApp)
-	ON_COMMAND(ID_APP_ABOUT, &CmfcbasicApp::OnAppAbout)
-	ON_COMMAND(ID_FILE_NEW, &CmfcbasicApp::OnFileNew)
-	ON_COMMAND(ID_MENU_THREAD_EX, &CmfcbasicApp::OnMenuThreadEx)
+BEGIN_MESSAGE_MAP(CMfcBasicApp, CWinApp)
+	ON_COMMAND(ID_APP_ABOUT, &CMfcBasicApp::OnAppAbout)
+	ON_COMMAND(ID_FILE_NEW, &CMfcBasicApp::OnFileNew)
+	ON_COMMAND(ID_MENU_THREAD_EX, &CMfcBasicApp::OnMenuThreadEx)
 END_MESSAGE_MAP()
 
 
 // CmfcbasicApp 생성
 
-CmfcbasicApp::CmfcbasicApp()
+CMfcBasicApp::CMfcBasicApp()
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
@@ -34,12 +34,12 @@ CmfcbasicApp::CmfcbasicApp()
 
 // 유일한 CmfcbasicApp 개체입니다.
 
-CmfcbasicApp theApp;
+CMfcBasicApp theApp;
 
 
 // CmfcbasicApp 초기화
 
-BOOL CmfcbasicApp::InitInstance()
+BOOL CMfcBasicApp::InitInstance()
 {
 	// 응용 프로그램 매니페스트가 ComCtl32.dll 버전 6 이상을 사용하여 비주얼 스타일을
 	// 사용하도록 지정하는 경우, Windows XP 상에서 반드시 InitCommonControlsEx()가 필요합니다. 
@@ -95,7 +95,7 @@ BOOL CmfcbasicApp::InitInstance()
 
 // CmfcbasicApp 메시지 처리기
 
- int CmfcbasicApp::ExitInstance() 
+ int CMfcBasicApp::ExitInstance() 
 {
 	//TODO: 추가한 추가 리소스를 처리합니다.
 	if (m_hMDIMenu != NULL)
@@ -110,7 +110,7 @@ BOOL CmfcbasicApp::InitInstance()
 	return CWinApp::ExitInstance();
 }
 
-void CmfcbasicApp::OnFileNew() 
+void CMfcBasicApp::OnFileNew() 
 {
 	CMainFrame* pFrame = STATIC_DOWNCAST(CMainFrame, m_pMainWnd);
 	// 새 MDI 자식 창을 만듭니다.
@@ -150,7 +150,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 // 대화 상자를 실행하기 위한 응용 프로그램 명령입니다.
-void CmfcbasicApp::OnAppAbout()
+void CMfcBasicApp::OnAppAbout()
 {
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
@@ -158,7 +158,7 @@ void CmfcbasicApp::OnAppAbout()
 
 // CmfcbasicApp 메시지 처리기
 
-void CmfcbasicApp::OnMenuThreadEx()
+void CMfcBasicApp::OnMenuThreadEx()
 {
 	CThreadExDlg threadExDlg;
 	threadExDlg.DoModal();

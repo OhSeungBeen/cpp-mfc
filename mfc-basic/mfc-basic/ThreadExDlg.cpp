@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "mfc-basic.h"
+#include "MfcBasic.h"
 #include "ThreadExDlg.h"
 
 
