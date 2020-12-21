@@ -14,10 +14,10 @@
 // 이 클래스의 구현에 대해서는 mfc-basic.cpp을 참조하십시오.
 //
 
-class CMfcBasicApp : public CWinApp
+class CMFCBasic : public CWinApp
 {
 public:
-	CMfcBasicApp();
+	CMFCBasic();
 
 
 // 재정의입니다.
@@ -37,4 +37,4 @@ public:
 	afx_msg void OnMenuThreadEx();
 };
 
-extern CMfcBasicApp theApp;
+extern CMFCBasic theApp;

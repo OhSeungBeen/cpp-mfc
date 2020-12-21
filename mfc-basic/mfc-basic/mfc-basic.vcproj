@@ -198,7 +198,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MfcBasic.cpp"
+				RelativePath=".\MFCBasic.cpp"
 				>
 			</File>
 			<File
@@ -225,6 +225,10 @@
 				RelativePath=".\ThreadExDlg.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\UIThread.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="헤더 파일"
@@ -244,7 +248,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MfcBasic.h"
+				RelativePath=".\MFCBasic.h"
 				>
 			</File>
 			<File
@@ -261,6 +265,10 @@
 			</File>
 			<File
 				RelativePath=".\ThreadExDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UIThread.h"
 				>
 			</File>
 		</Filter>
