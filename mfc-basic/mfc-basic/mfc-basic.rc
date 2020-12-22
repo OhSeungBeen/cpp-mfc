@@ -85,17 +85,13 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "끝내기(&X)",                     ID_APP_EXIT
     END
-    POPUP "보기(&V)"
+    POPUP "Control"
     BEGIN
-        MENUITEM "상태 표시줄(&S)",                  ID_VIEW_STATUS_BAR
-    END
-    POPUP "도움말(&H)"
-    BEGIN
-        MENUITEM "mfc-basic 정보(&A)...",         ID_APP_ABOUT
+        MENUITEM "EditControl",                 ID_Menu_EditControl
     END
     POPUP "Worker Thread"
     BEGIN
-        MENUITEM "Worker Thread",               ID_MENU_THREAD_EX
+        MENUITEM "Worker Thread",               ID_Menu_WorkerThread
     END
     POPUP "UI Thread"
     BEGIN
@@ -103,6 +99,10 @@ BEGIN
         MENUITEM "Resume Thread",               ID_Menu_ResumeThread
         MENUITEM "Suspend Thread",              ID_Menu_SuspendThread
         MENUITEM "Exit Thread",                 ID_Menu_ExitThread
+    END
+    POPUP "Keboard"
+    BEGIN
+        MENUITEM "Keyboard",                    ID_Menu_Keyboard
     END
 END
 
@@ -177,12 +177,31 @@ BEGIN
     DEFPUSHBUTTON   "확인",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_THREAD_EX DIALOGEX 0, 0, 316, 182
+IDD_THREADDLG DIALOGEX 0, 0, 316, 182
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Run Notepad",IDC_BUTTON_RUN_NOTEPAD,7,7,138,44
+END
+
+IDD_KEYBOARDDLG DIALOGEX 0, 0, 316, 182
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+END
+
+IDD_EDITCONTROLDLG DIALOGEX 0, 0, 316, 182
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "확인",ID_Button_Ok,205,161,50,14
+    PUSHBUTTON      "취소",IDCANCEL,259,161,50,14
+    LTEXT           "Edit Control",IDC_STATIC,7,7,57,8
+    EDITTEXT        IDC_Edit_Id,87,50,125,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_Edit_Password,87,71,125,14,ES_AUTOHSCROLL
 END
 
 
@@ -241,7 +260,23 @@ BEGIN
         BOTTOMMARGIN, 55
     END
 
-    IDD_THREAD_EX, DIALOG
+    IDD_THREADDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
+    END
+
+    IDD_KEYBOARDDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
+    END
+
+    IDD_EDITCONTROLDLG, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 309

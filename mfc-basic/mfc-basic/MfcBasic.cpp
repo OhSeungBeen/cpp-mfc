@@ -156,4 +156,3 @@ void CMFCBasic::OnAppAbout()
 
 // CmfcbasicApp 메시지 처리기
 
-

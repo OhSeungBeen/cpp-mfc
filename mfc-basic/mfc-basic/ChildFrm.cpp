@@ -70,7 +70,7 @@ int CChildFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CMDIChildWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	// 프레임의 클라이언트 영역을 차지하는 뷰를 만듭니다.
 	if (!m_wndView.Create(NULL, NULL, AFX_WS_DEFAULT_VIEW, 
 		CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL))

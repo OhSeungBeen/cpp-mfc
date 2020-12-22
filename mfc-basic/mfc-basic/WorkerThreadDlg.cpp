@@ -3,31 +3,31 @@
 
 #include "stdafx.h"
 #include "MFCBasic.h"
-#include "WorkThreadDlg.h"
+#include "WorkerThreadDlg.h"
 
 
 // CThreadEx 대화 상자입니다.
 
-IMPLEMENT_DYNAMIC(CWorkThread, CDialog)
+IMPLEMENT_DYNAMIC(CWorkerThreadDlg, CDialog)
 
-CWorkThread::CWorkThread(CWnd* pParent /*=NULL*/)
-	: CDialog(CWorkThread::IDD, pParent)
+CWorkerThreadDlg::CWorkerThreadDlg(CWnd* pParent /*=NULL*/)
+	: CDialog(CWorkerThreadDlg::IDD, pParent)
 {
 
 }
 
-CWorkThread::~CWorkThread()
+CWorkerThreadDlg::~CWorkerThreadDlg()
 {
 }
 
-void CWorkThread::DoDataExchange(CDataExchange* pDX)
+void CWorkerThreadDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(CWorkThread, CDialog)
-	ON_BN_CLICKED(IDC_BUTTON_RUN_NOTEPAD, &CWorkThread::OnBnClickedButtonRunNotepad)
+BEGIN_MESSAGE_MAP(CWorkerThreadDlg, CDialog)
+	ON_BN_CLICKED(IDC_BUTTON_RUN_NOTEPAD, &CWorkerThreadDlg::OnBnClickedButtonRunNotepad)
 END_MESSAGE_MAP()
 
 UINT ThreadWaitNotpad(LPVOID pParam) // 반드시 UNIT형을 반환해야되고 LPVOID형의 포인터를 인자로 받아야한다.
@@ -75,7 +75,7 @@ UINT ThreadWaitNotpad(LPVOID pParam) // 반드시 UNIT형을 반환해야되고 LPVOID형의 
 	return 0;
 }
 
-void CWorkThread::OnBnClickedButtonRunNotepad()
+void CWorkerThreadDlg::OnBnClickedButtonRunNotepad()
 {	// CwinThread 객체 나중에 자동으로 삭제
 	//CWinThread* pThread = AfxBeginThread(ThreadWaitNotpad, NULL); // afxBeginThread() 스레드 생성 / 스레드르 실행할 함수 주소를 인자로 받는다.
 	

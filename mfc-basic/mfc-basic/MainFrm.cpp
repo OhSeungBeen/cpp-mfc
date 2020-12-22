@@ -6,8 +6,10 @@
 #include "MFCBasic.h"
 
 #include "MainFrm.h"
-#include "WorkThreadDlg.h"
-#include "UIThread.h" // UIThread include
+#include "WorkerThreadDlg.h"
+#include "UIThread.h"
+#include "KeyboardDlg.h"
+#include "EditContorl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,11 +21,13 @@ IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_WM_CREATE()
-	ON_COMMAND(ID_MENU_THREAD_EX, &CMainFrame::OnMenuThreadEx)
+	ON_COMMAND(ID_Menu_WorkerThread, &CMainFrame::OnMenuWorkerThread)
 	ON_COMMAND(ID_Menu_UIThread, &CMainFrame::OnMenuUithread)
 	ON_COMMAND(ID_Menu_ResumeThread, &CMainFrame::OnMenuResumethread)
 	ON_COMMAND(ID_Menu_SuspendThread, &CMainFrame::OnMenuSuspendthread)
 	ON_COMMAND(ID_Menu_ExitThread, &CMainFrame::OnMenuExitthread)
+	ON_COMMAND(ID_Menu_Keyboard, &CMainFrame::OnMenuKeyboard)
+	ON_COMMAND(ID_Menu_EditControl, &CMainFrame::OnMenuEditcontrol)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -87,12 +91,15 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 // CMainFrame 메시지 처리기
 
-void CMainFrame::OnMenuThreadEx()
+
+// worker thread
+void CMainFrame::OnMenuWorkerThread()
 {
-	CWorkThread threadExDlg;
+	CWorkerThreadDlg threadExDlg;
 	threadExDlg.DoModal();
 }
 
+// ui thread
 void CMainFrame::OnMenuUithread()
 {
 	if(g_pUIThread != NULL)
@@ -119,4 +126,16 @@ void CMainFrame::OnMenuExitthread()
 {
 	if(g_pUIThread != NULL)
 		g_pUIThread->PostThreadMessage(WM_QUIT, NULL, NULL);
+}
+
+void CMainFrame::OnMenuKeyboard()
+{
+	CKeyboardDlg keyboardDlg;
+	keyboardDlg.DoModal();
+}
+
+void CMainFrame::OnMenuEditcontrol()
+{
+	CEditContorl editControlDlg;
+	editControlDlg.DoModal();
 }

@@ -194,6 +194,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EditContorl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyboardDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.cpp"
 				>
 			</File>
@@ -226,7 +234,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\WorkThreadDlg.cpp"
+				RelativePath=".\WorkerThreadDlg.cpp"
 				>
 			</File>
 		</Filter>
@@ -241,6 +249,14 @@
 			</File>
 			<File
 				RelativePath=".\ChildView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EditContorl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyboardDlg.h"
 				>
 			</File>
 			<File
@@ -268,7 +284,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\WorkThreadDlg.h"
+				RelativePath=".\WorkerThreadDlg.h"
 				>
 			</File>
 		</Filter>
