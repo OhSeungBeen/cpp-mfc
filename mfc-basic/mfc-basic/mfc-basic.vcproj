@@ -222,11 +222,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\ThreadExDlg.cpp"
+				RelativePath=".\UIThread.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\UIThread.cpp"
+				RelativePath=".\WorkThreadDlg.cpp"
 				>
 			</File>
 		</Filter>
@@ -264,11 +264,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ThreadExDlg.h"
+				RelativePath=".\UIThread.h"
 				>
 			</File>
 			<File
-				RelativePath=".\UIThread.h"
+				RelativePath=".\WorkThreadDlg.h"
 				>
 			</File>
 		</Filter>

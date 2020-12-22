@@ -6,7 +6,7 @@
 #include "MFCBasic.h"
 
 #include "MainFrm.h"
-#include "ThreadExDlg.h"
+#include "WorkThreadDlg.h"
 #include "UIThread.h" // UIThread include
 
 #ifdef _DEBUG
@@ -89,7 +89,7 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 void CMainFrame::OnMenuThreadEx()
 {
-	CThreadExDlg threadExDlg;
+	CWorkThread threadExDlg;
 	threadExDlg.DoModal();
 }
 

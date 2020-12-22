@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 // CUIThread
 
 class CUIThread : public CWinThread

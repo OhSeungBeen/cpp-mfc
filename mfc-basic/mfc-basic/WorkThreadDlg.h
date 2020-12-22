@@ -2,13 +2,13 @@
 
 // CThreadEx 대화 상자입니다.
 
-class CThreadExDlg : public CDialog
+class CWorkThread : public CDialog
 {
-	DECLARE_DYNAMIC(CThreadExDlg)
+	DECLARE_DYNAMIC(CWorkThread)
 
 public:
-	CThreadExDlg(CWnd* pParent = NULL);   // 표준 생성자입니다.
-	virtual ~CThreadExDlg();
+	CWorkThread(CWnd* pParent = NULL);   // 표준 생성자입니다.
+	virtual ~CWorkThread();
 
 // 대화 상자 데이터입니다.
 	enum { IDD = IDD_THREAD_EX };
