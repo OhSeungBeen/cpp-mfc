@@ -1,0 +1,3 @@
+Connected !!
+[recv]STX, EXT 테스트입니다.
+[recv]STX, EXT 테스트입니다.
