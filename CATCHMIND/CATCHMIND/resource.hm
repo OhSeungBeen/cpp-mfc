@@ -1,0 +1,4 @@
+// Microsoft Visual C++ generated Help ID include file.
+// Used by CATCHMIND.rc
+//
+#define HIDC_LIST_USER                  0x80850405    // IDD_GAMEROOM_DIALOG

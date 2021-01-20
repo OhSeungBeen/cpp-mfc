@@ -1,0 +1,465 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+// Generated Help ID header file
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "resource.hm"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 한국어 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
+#ifdef _WIN32
+LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
+#pragma code_page(949)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)\r\n"
+    "LANGUAGE 18, 1\r\n"
+    "#pragma code_page(949)\r\n"
+    "#include ""res\\CATCHMIND.rc2""  // Microsoft Visual C++ 이외의 다른 도구에서 편집한 리소스입니다.\r\n"
+    "#include ""l.KOR\\afxres.rc""      // 표준 구성 요소입니다.\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\CATCHMIND.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "CATCHMIND 정보"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
+    LTEXT           "CATCHMIND, 버전 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2021",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "확인",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_CATCHMIND_DIALOG DIALOGEX 0, 0, 338, 277
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "CATCHMIND"
+MENU IDR_MENU_USER
+FONT 10, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    PUSHBUTTON      "Capture",IDC_BTN_CAPTURE,298,1,35,14
+    PUSHBUTTON      "Log Path",IDC_BTN_LOG_PATH,258,1,35,14
+END
+
+IDD_CREATE_ROOM_DIALOG DIALOGEX 0, 0, 142, 158
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TCP/IP 방 생성"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "방 생성",IDOK,15,132,50,14
+    PUSHBUTTON      "취소",IDCANCEL,75,132,48,14
+    CONTROL         "",IDD_CREATE_IPADDRESS,"SysIPAddress32",WS_TABSTOP,58,18,72,13
+    LTEXT           "IP",IDC_STATIC,32,21,11,10
+    LTEXT           "PORT",IDC_STATIC,26,46,21,10
+    EDITTEXT        IDD_EDIT_CREATE_PORT,69,42,48,15,ES_AUTOHSCROLL
+    LTEXT           "공개 / 비공개",IDC_STATIC_PASSWORD,13,90,45,9
+    LTEXT           "비밀번호",IDC_STATIC_PASSWORD2,19,111,37,9
+    COMBOBOX        IDC_COMBO_PRIVATE,69,87,48,50,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_PASSWORD,68,107,48,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "인원",IDC_STATIC_ID,26,69,17,9
+    COMBOBOX        IDC_COMBO_USER_SIZE,69,65,48,42,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_WATINGROOM_DIALOG DIALOGEX 0, 0, 338, 235
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+MENU IDR_MENU_USER
+FONT 10, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    PUSHBUTTON      "MULTI PLAY CREATE",IDC_BTN_CREATE_ROOM_TCP,156,90,72,61
+    PUSHBUTTON      "MULTIPLAY JOIN",IDC_BTN_JOIN_ROOM,240,90,73,60
+    PUSHBUTTON      "NOMAL PLAY",IDC_BTN_CREATE_ROOM_SERIAL,36,90,74,62
+    GROUPBOX        "SERIAL",IDC_STATIC,18,72,108,90,BS_LEFT
+    GROUPBOX        "TCP / IP",IDC_STATIC,144,72,180,90,BS_LEFT
+END
+
+IDD_PROFILE_DIALOG DIALOGEX 0, 0, 134, 139
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "프로필"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_PROFILE_ID,57,85,58,15,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "ID",IDC_STATIC_ID,31,87,9,9
+    LTEXT           "IMAGE",IDC_STATIC_IMAGE,24,27,25,9
+    LTEXT           "NAME",IDC_STATIC_NAME,26,67,20,9
+    EDITTEXT        IDC_EDIT_PROFILE_NAME,57,65,58,15,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "닫기",IDOK,42,112,50,14
+    CONTROL         "",IDC_PIC_IMAGE,"Static",SS_BITMAP | SS_CENTERIMAGE,57,15,59,45
+END
+
+IDD_JOIN_DIALOG DIALOGEX 0, 0, 134, 139
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "회원 가입 "
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "회원가입 ",IDOK,14,106,50,14
+    PUSHBUTTON      "취소",IDCANCEL,68,106,48,14
+    EDITTEXT        IDC_EDIT_JOIN_ID,68,39,47,15,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_JOIN_PW,68,60,47,15,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "ID",IDC_STATIC_ID,32,42,9,9
+    LTEXT           "PASSWORD",IDC_STATIC_PASSWORD,16,63,45,9
+    LTEXT           "IMAGE",IDC_STATIC_PASSWORD2,23,84,25,9
+    LTEXT           "NAME",IDC_STATIC_NAME,27,22,20,9
+    EDITTEXT        IDC_EDIT_JOIN_NAME,68,18,47,15,ES_AUTOHSCROLL
+    PUSHBUTTON      "파일 찾기",IDC_BTN_FILE,68,81,48,14
+END
+
+IDD_GAMEROOM_DIALOG DIALOGEX 0, 0, 338, 236
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+MENU IDR_MENU_USER
+FONT 10, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_STATIC_PANEL,"Static",SS_BLACKFRAME,6,18,324,141
+    LISTBOX         IDC_LIST_MESSAGE,6,170,213,47,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_SEND_MESSAGE,6,219,173,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Enter",IDC_BTN_SEND_MESSAGE,181,219,38,14
+    LISTBOX         IDC_LIST_USER,220,170,110,47,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP,0,HIDC_LIST_USER
+    LTEXT           "채팅",IDC_STATIC,7,161,17,8
+    LTEXT           "참가자 ",IDC_STATIC,222,161,20,8
+    PUSHBUTTON      "프로필 보기",IDC_BTN_PROFILE,290,219,38,14
+    COMBOBOX        IDC_COMBO_THINKNESS,262,4,33,50,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_COLOR,297,4,33,39,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "연필",IDC_STATIC,246,5,12,8
+    LTEXT           "MODE",IDC_STATIC_MODE,6,6,115,8
+    EDITTEXT        IDC_EDIT_QUIZ,153,4,40,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+END
+
+IDD_LOGIN_DIALOG DIALOGEX 0, 0, 339, 246
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW | WS_EX_APPWINDOW
+FONT 10, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    EDITTEXT        IDD_EDIT_LOGIN_ID,171,130,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDD_EDIT_LOGIN_PW,171,149,40,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "ID",IDD_STATIC_ID,141,133,8,8
+    LTEXT           "PASSWORD",IDD_STATIC_PASSWORD,125,152,41,8
+    GROUPBOX        "",IDD_STATIC_LOGIN,117,117,107,58,BS_CENTER
+    PUSHBUTTON      "JOIN",IDD_BTN_JOIN,174,180,50,14
+    PUSHBUTTON      "LOGIN",IDD_BTN_LOGIN,116,180,50,14
+    LTEXT           "CATCHMIND",IDD_STATIC,105,62,148,40
+END
+
+IDD_PASSWORD_DIALOG DIALOGEX 0, 0, 134, 75
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "패스워드"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "확인",IDOK,15,42,50,14
+    LTEXT           "PASSWORD",IDC_STATIC_NAME,22,22,40,9
+    EDITTEXT        IDC_EDIT_PASSWORD,68,18,47,15,ES_AUTOHSCROLL
+    PUSHBUTTON      "취소",IDCANCEL,69,42,48,14
+END
+
+IDD_FRIEND_DIALOG DIALOGEX 0, 0, 134, 139
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "친구 목록"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "닫기",IDOK,42,112,50,14
+    LISTBOX         IDC_LIST_FRIEND,16,20,99,84,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Friend List",IDC_STATIC,17,10,34,8
+END
+
+IDD_BTN_SCERIAL DIALOGEX 0, 0, 141, 133
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "방 생성"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+END
+
+IDD_ROOM_SERIAL_DIALOG DIALOGEX 0, 0, 134, 146
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "시리얼 연결"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "연결하기",IDOK,13,120,50,14
+    PUSHBUTTON      "취소",IDCANCEL,68,120,48,14
+    LTEXT           "Port",IDC_STATIC_ID,35,21,17,9
+    LTEXT           "BaundRate",IDC_STATIC_PASSWORD,16,42,45,9
+    COMBOBOX        IDC_COMBO_PORT,67,19,48,42,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_BAUNDRATE,67,39,48,50,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Data bits",IDC_STATIC_PASSWORD2,22,63,37,9
+    LTEXT           "Stop bits",IDC_STATIC_PASSWORD3,23,79,37,9
+    LTEXT           "Parity",IDC_STATIC_PASSWORD4,30,97,25,9
+    COMBOBOX        IDC_COMBO_DATABITS,66,60,48,50,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_STOPBITS,65,79,48,50,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_PARITY,65,97,48,50,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_JOIN_ROOM_DIALOG DIALOGEX 0, 0, 142, 97
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TCP/IP 방 참가"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "방 참가",IDOK,15,66,50,14
+    PUSHBUTTON      "취소",IDCANCEL,75,66,48,14
+    CONTROL         "",IDD_IPADDRESS,"SysIPAddress32",WS_TABSTOP,58,18,72,13
+    LTEXT           "IP",IDC_STATIC,32,21,11,10
+    LTEXT           "PORT",IDC_STATIC,26,46,21,10
+    EDITTEXT        IDD_EDIT_JOIN_PORT,69,42,48,15,ES_AUTOHSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041203b5"
+        BEGIN
+            VALUE "CompanyName", "TODO: <회사 이름>"
+            VALUE "FileDescription", "TODO: <파일 설명>"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "CATCHMIND.exe"
+            VALUE "LegalCopyright", "TODO: (c) <회사 이름>.  All rights reserved."
+            VALUE "OriginalFilename", "CATCHMIND.exe"
+            VALUE "ProductName", "TODO: <제품 이름>"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x412, 949
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_CATCHMIND_DIALOG, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 275
+    END
+
+    IDD_CREATE_ROOM_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 135
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 151
+    END
+
+    IDD_WATINGROOM_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 331
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_PROFILE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_JOIN_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_GAMEROOM_DIALOG, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 206
+    END
+
+    IDD_LOGIN_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 332
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 239
+    END
+
+    IDD_PASSWORD_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 68
+    END
+
+    IDD_FRIEND_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_BTN_SCERIAL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 133
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 126
+    END
+
+    IDD_ROOM_SERIAL_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 139
+    END
+
+    IDD_JOIN_ROOM_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 135
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 90
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_USER MENU 
+BEGIN
+    POPUP "메뉴"
+    BEGIN
+        MENUITEM "계정 정보",                       ID_PROFILE
+        MENUITEM "친구 목록",                       ID_FRIEND_VIEW
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "CATCHMIND 정보(&A)..."
+    IDP_SOCKETS_INIT_FAILED "Windows 소켓을 초기화하지 못했습니다."
+END
+
+#endif    // 한국어 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
+LANGUAGE 18, 1
+#pragma code_page(949)
+#include "res\CATCHMIND.rc2"  // Microsoft Visual C++ 이외의 다른 도구에서 편집한 리소스입니다.
+#include "l.KOR\afxres.rc"      // 표준 구성 요소입니다.
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
