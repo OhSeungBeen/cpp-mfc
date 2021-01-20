@@ -48,7 +48,7 @@ void CClientSocket::SendChatMsg( CString name, CString message )
 	Send((char*)&chatMessage, sizeof(ChatMessage));
 }
 
-// Send Profile To Server
+// Send Server Profile
 void CClientSocket::SendProfile()
 {
 	// profile
@@ -92,6 +92,8 @@ void CClientSocket::SendPoint(CPoint startPoint, CPoint endPoint, int thinkness,
 	
 	SendHeader(POINT, sizeof(Point));
 	Send(&point, sizeof(Point));
+	byte result;
+	Receive(&result, sizeof(byte));
 }
 
 void CClientSocket::OnReceive(int nErrorCode)
@@ -152,7 +154,10 @@ void CClientSocket::OnReceive(int nErrorCode)
 			Point point;
 			Receive((char*)&point, header.dataSize);
 			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_DRAW, 0, (LPARAM)&point);
+			byte result = 1;
+			Send(&result, sizeof(byte));
 			break;
+
 		}
 	case PROFILE :
 		{
@@ -164,14 +169,10 @@ void CClientSocket::OnReceive(int nErrorCode)
 				Receive((char*)&profile, sizeof(Profile));
 				m_vProfile.push_back(profile);
 
-				byte result = 1;
-				
-
 				// image save
 				ULONGLONG fileSize;
-				Receive(&fileSize, sizeof(ULONGLONG));
 
-				Send(&result, sizeof(byte)); //
+				Receive(&fileSize, sizeof(ULONGLONG));
 				
 				byte* imageData = new byte[4096];
 				DWORD dwRead;
@@ -183,14 +184,14 @@ void CClientSocket::OnReceive(int nErrorCode)
 				file.Open(imagePath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
 				do{
 					dwRead = Receive(imageData, 4096);
-
-					Send(&result, sizeof(byte)); //
-
 					file.Write(imageData, dwRead);
 					receiveSize += dwRead;
 					if(receiveSize >= fileSize)
 						break;
 				}while(dwRead > 0);
+				
+				byte result = 1;
+				Send(&result, sizeof(byte));
 
 				delete imageData;
 				file.Close();
@@ -200,6 +201,42 @@ void CClientSocket::OnReceive(int nErrorCode)
 			break;
 		}
 
+	case PROFILE2 :
+		{
+			// profile
+			Profile profile;
+			Receive((char*)&profile, sizeof(Profile));
+			m_vProfile.push_back(profile);
+
+			// image save
+			ULONGLONG fileSize;
+
+			Receive(&fileSize, sizeof(ULONGLONG));
+
+			byte* imageData = new byte[4096];
+			DWORD dwRead;
+			ULONGLONG receiveSize = 0;
+
+			CString imageName = profile.imageName;
+			CString imagePath = "profileImage\\client\\" + imageName;
+			CFile file;
+			file.Open(imagePath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
+			do{
+				dwRead = Receive(imageData, 4096);
+				file.Write(imageData, dwRead);
+				receiveSize += dwRead;
+				if(receiveSize >= fileSize)
+					break;
+			}while(dwRead > 0);
+
+			byte result = 1;
+			Send(&result, sizeof(byte));
+
+			delete imageData;
+			file.Close();
+			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_ONE_USER_PROFILE, 0, (LPARAM)&profile);
+			break;
+		}
 	case QUIZ :
 		{
 			m_quiz = RecvString(header.dataSize);

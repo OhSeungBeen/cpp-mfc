@@ -108,6 +108,12 @@ LRESULT CWatingRoomDlg::OnAccept( WPARAM wParam, LPARAM lParam )
 	((CCATCHMINDDlg*)GetParent())->ChangeDlg(WATING_ROOM, GAME_ROOM);
 	((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(0);
 	
+	Profile profile;
+	strcpy_s(profile.id, g_member.id);
+	strcpy_s(profile.name, g_member.name);
+	strcpy_s(profile.imageName, g_member.imageName);
+	g_clientSocket.m_vProfile.push_back(profile);
+	
 	AfxMessageBox("ROOM JOIN SUCCESS");
 	g_logManager.Log("ROOM JOIN SUCCESS");
 	return 0;

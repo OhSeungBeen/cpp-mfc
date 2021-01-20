@@ -164,9 +164,13 @@ void CGameRoomDlg::OnBnClickedBtnProfile()
 	// TCP/IP
 	if(g_clientSocket.m_connected) // CLIENT
 	{
+		
 		name = g_clientSocket.m_vProfile[index].name;
 		id = g_clientSocket.m_vProfile[index].id;
-		imageName.Format("client\\%s", g_clientSocket.m_vProfile[index].imageName);
+		if(index == 0)
+			imageName.Format("%s", g_clientSocket.m_vProfile[index].imageName);
+		else
+			imageName.Format("client\\%s", g_clientSocket.m_vProfile[index].imageName);
 	}
 	else if(g_listenSocket.m_connected) // SERVER
 	{

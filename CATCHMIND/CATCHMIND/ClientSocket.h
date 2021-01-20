@@ -8,8 +8,10 @@
 #define POINT 0x43
 #define MESSAGE 0x44
 #define PROFILE 0x45
-#define QUIZ 0x46
-#define CHANGE_MODE 0x47
+#define PROFILE2 0x46
+#define PROFILE_RECV_FROM_CLIENT 0x47
+#define QUIZ 0x48
+#define CHANGE_MODE 0x49
 
 class CClientSocket : public CSocket
 {

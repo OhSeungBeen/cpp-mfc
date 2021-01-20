@@ -7,8 +7,10 @@
 #define POINT 0x43
 #define MESSAGE 0x44
 #define PROFILE 0x45
-#define QUIZ 0x46
-#define CHANGE_MODE 0x47
+#define PROFILE2 0x46
+#define PROFILE_RECV_FROM_CLIENT 0x47
+#define QUIZ 0x48
+#define CHANGE_MODE 0x49
 class CServerSocket : public CSocket
 {
 public:
@@ -26,7 +28,8 @@ public:
 	void SendResult(int result);
 	void SendChatMsg(CString name, CString message);
 	void SendQuiz(CString quiz);
-	void SendProfile();
+	void SendProfiles();
+	void SendOtherProfile(Profile profile);
 	void SendPoint(CPoint startPoint, CPoint endPoint, int thinkness, COLORREF rgb);
 	void SendMode(int mode);
 	void SendOtherChatMsg(CString name, CString message);

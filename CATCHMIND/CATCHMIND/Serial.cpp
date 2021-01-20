@@ -249,10 +249,10 @@ void CSerial::WriteChatMessage(CString name, CString message)
 void CSerial::WritePoint(CPoint startPoint, CPoint endPoint, int thinkness, COLORREF rgb)
 {
 	Point point;
-	point.startX = startPoint.x;
-	point.startY = startPoint.y;
-	point.endX = endPoint.x;
-	point.endY = endPoint.y;
+	point.startX = (short)startPoint.x;
+	point.startY = (short)startPoint.y;
+	point.endX = (short)endPoint.x;
+	point.endY = (short)endPoint.y;
 	point.thinkness = thinkness;
 	point.rgb = rgb;
 

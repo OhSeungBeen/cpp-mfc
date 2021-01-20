@@ -43,7 +43,7 @@ void CListenSocket::OnAccept(int nErrorCode)
 		 // ACCEPT SUCCESS
 		serverSocket->SendAccept();
 		serverSocket->SendQuiz(g_listenSocket.m_quiz);
-		serverSocket->SendProfile();
+		serverSocket->SendProfiles();
 	}
 	else
 	{

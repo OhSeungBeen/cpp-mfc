@@ -76,6 +76,8 @@ void CServerSocket::SendPoint(CPoint startPoint, CPoint endPoint, int thinkness,
 
 	SendHeader(POINT, sizeof(Point));
 	Send(&point, sizeof(Point));
+	byte result;
+	Receive(&result, sizeof(byte));
 }
 
 // Send Quiz
@@ -133,17 +135,47 @@ void CServerSocket::SendMode(int mode)
 	Send(&mode, sizeof(int));
 }
 
+// Send OtherClient Profile Received Profile
+void CServerSocket::SendOtherProfile(Profile profile)
+{
+	POSITION pos = m_pServerSocketList->GetHeadPosition();
+	while (pos != NULL)
+	{
+		CServerSocket* serverSocket = (CServerSocket*)m_pServerSocketList->GetNext(pos);
+		if(serverSocket == this) continue;
+		// profile
+		serverSocket->SendHeader(PROFILE2, sizeof(Profile));
+		serverSocket->Send((char*)&profile, sizeof(Profile));
+
+		// image
+		CFile imageFile;
+		byte* imageData = new byte[4096];
+		DWORD dwRead;
+
+		CString imageName;
+		imageName.Format("profileImage\\server\\%s", profile.imageName);
+		imageFile.Open(imageName, CFile::modeReadWrite | CFile::typeBinary);
+
+		ULONGLONG imageSize = imageFile.GetLength();
+		serverSocket->Send(&imageSize, sizeof(ULONGLONG));
+		do{
+			dwRead = imageFile.Read(imageData, 4096);
+			serverSocket->Send(imageData, dwRead);
+		}while(dwRead > 0);
+
+		delete imageData;
+		imageFile.Close();
+	}
+}
+
 // Send Client OtherClientProfile and ServerProfile (include image data)
-void CServerSocket::SendProfile()
+void CServerSocket::SendProfiles()
 {
 	int size = m_vProfile->size();
 	SendHeader(PROFILE, sizeof(Profile) * size);
 	for(int i = 0; i < size; i++)
 	{
 		Send((char*)&m_vProfile->at(i), sizeof(Profile));
-
-		byte result;
-		Receive(&result, sizeof(byte)); //
 		
 		// image send
 		CFile imageFile;
@@ -159,15 +191,18 @@ void CServerSocket::SendProfile()
 		imageFile.Open(imageName, CFile::modeRead | CFile::typeBinary);
 
 		ULONGLONG imageSize = imageFile.GetLength();
+
 		Send(&imageSize, sizeof(ULONGLONG));
 
-		Receive(&result, sizeof(byte)); //
 		do{
 			dwRead = imageFile.Read(imageData, 4096);
-			Send(imageData, dwRead);
 
-			Receive(&result, sizeof(byte)); //
+			Send(imageData, dwRead);
+			
 		}while(dwRead > 0);
+		
+		byte result;
+		Receive(&result, sizeof(byte)); 
 
 		delete imageData;
 		imageFile.Close();
@@ -203,9 +238,12 @@ void CServerSocket::OnReceive(int nErrorCode)
 				CServerSocket* serverSocket = (CServerSocket*)m_pServerSocketList->GetNext(pos);
 				serverSocket->SendHeader(POINT, sizeof(Point));
 				serverSocket->Send((char*)&point, sizeof(Point));
+				byte result;
+				Receive(&result, sizeof(byte));
 			}
 			//((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->RecvDraw(point);
 			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_DRAW, 0, (LPARAM)&point);
+			
 			break;
 		}
 	case MESSAGE :
@@ -271,9 +309,9 @@ void CServerSocket::OnReceive(int nErrorCode)
 
 			delete imageData;
 			file.Close();
+			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_ONE_USER_PROFILE, 0, (LPARAM)&profile);
 
-			
-			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_ONE_USER_PROFILE, 1, (LPARAM)&profile);
+			SendOtherProfile(profile);
 			break;
 		}
 	}
