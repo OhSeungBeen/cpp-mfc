@@ -26,6 +26,10 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 
+	void NoticeFullRoom();
+	void NoticeIncorrectPassword();
+	void NoticeAccept();
+
 	afx_msg void OnProfile();
 	afx_msg void OnBnClickedBtnCreateRoom();
 	afx_msg void OnBnClickedBtnJoinRoom();
@@ -33,6 +37,4 @@ public:
 	afx_msg void OnBnClickedBtnGameStart();
 	afx_msg void OnBnClickedBtnCreateRoomSerial();
 
-	LRESULT OnDisConnect( WPARAM wParam, LPARAM lParam );
-	LRESULT OnAccept( WPARAM wParam, LPARAM lParam );
 };

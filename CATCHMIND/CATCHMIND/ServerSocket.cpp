@@ -19,27 +19,6 @@ CServerSocket::~CServerSocket()
 {
 }
 
-// Send Full Room Notice
-void CServerSocket::SendFullRoom()
-{
-	SendHeader(FULL_ROOM, 0);
-}
-
-// Send Private Room Notice
-void CServerSocket::SendPrivate(CString password)
-{
-	char *pString = password.GetBuffer();
-	int passwordSize = g_listenSocket.m_password.GetLength() + 1;
-	SendHeader(PRIVATE_ROOM, passwordSize);
-	Send(pString, passwordSize);
-}
-
-// Send Accept Success Notice
-void CServerSocket::SendAccept()
-{
-	SendHeader(ACCEPT, 0);
-}
-
 // Send Header
 void CServerSocket::SendHeader(byte command, int dataSize)
 {
@@ -50,6 +29,60 @@ void CServerSocket::SendHeader(byte command, int dataSize)
 	Send((char*)&header, sizeof(Header));
 	byte result;
 	Receive(&result, sizeof(byte));
+}
+
+void CServerSocket::SendResponse(byte command, byte result)
+{
+	Response response;
+	response.command = command;
+	response.result = result;
+	Send(&response, sizeof(Response));
+}
+
+// Send Full Room Notice
+void CServerSocket::SendFullRoom()
+{
+	//SEND HEADER
+	SendHeader(FULL_ROOM, 0);
+
+	//SEND BODY X
+
+	//RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != FULL_ROOM)
+		AfxMessageBox("FULL_ROOM COM ERROR!!");
+}
+
+// Send Private Room Notice
+void CServerSocket::SendPrivate(CString password)
+{
+	char *pString = password.GetBuffer();
+	int passwordSize = g_listenSocket.m_password.GetLength() + 1;
+
+	// SEND HEADER
+	SendHeader(PRIVATE_ROOM, passwordSize);
+
+	// SEND BODY
+	Send(pString, passwordSize);
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != PRIVATE_ROOM)
+		AfxMessageBox("PRIVATE_ROOM COM ERROR!!");
+}
+
+// Send Accept Success Notice
+void CServerSocket::SendAccept()
+{
+	// SEND HEADER
+	SendHeader(ACCEPT, 0);
+
+	// SEND BODY X
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != ACCEPT)
+		AfxMessageBox("ACCEPT COM ERROR!!");
 }
 
 
@@ -86,8 +119,18 @@ void CServerSocket::SendQuiz(CString quiz)
 	int quizSize= quiz.GetLength() + 1;
 	char *pQuiz = new char[quizSize];
 	memcpy(pQuiz, quiz.GetBuffer(), quizSize);
+
+	// SEND HEADER
 	SendHeader(QUIZ, quizSize);
+
+	// SEND BODY
 	Send(pQuiz, quizSize);
+	
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != QUIZ)
+		AfxMessageBox("ACCEPT COM ERROR!!");
+
 	delete[] pQuiz;
 }
 
@@ -102,7 +145,6 @@ void CServerSocket::SendOtherChatMsg(CString name, CString message)
 		serverSocket->SendChatMsg(name, message);
 	}
 }
-
 
 
 // Send Other Client Mode
@@ -143,11 +185,13 @@ void CServerSocket::SendOtherProfile(Profile profile)
 	{
 		CServerSocket* serverSocket = (CServerSocket*)m_pServerSocketList->GetNext(pos);
 		if(serverSocket == this) continue;
-		// profile
-		serverSocket->SendHeader(PROFILE2, sizeof(Profile));
+		// SEND HEADER
+		serverSocket->SendHeader(JOINED_NEW_USER_PROFILE, sizeof(Profile));
+
+		// SEND PROFILE BODY
 		serverSocket->Send((char*)&profile, sizeof(Profile));
 
-		// image
+		// SEND IMAGE BODY
 		CFile imageFile;
 		byte* imageData = new byte[4096];
 		DWORD dwRead;
@@ -165,47 +209,69 @@ void CServerSocket::SendOtherProfile(Profile profile)
 
 		delete imageData;
 		imageFile.Close();
+		// RECV RESULT RESPONSE
+		Response response = RecvResponse();
+		if(response.command != JOINED_NEW_USER_PROFILE)
+			AfxMessageBox("JOINED_NEW_USER_PROFILE COM ERROR!!");
 	}
+}
+
+void CServerSocket::RequestProfile()
+{
+	// SEND HEADER
+	SendHeader(REQUEST_PROFILE, 0);
+	// BODY X
+	
+	//
+	// RECV RESULT RESPONSE
+	/*Response response = RecvResponse();
+	if(response.command != REQUEST_PROFILE)
+		AfxMessageBox("REQUEST_PROFILE COM ERROR!!");*/
 }
 
 // Send Client OtherClientProfile and ServerProfile (include image data)
 void CServerSocket::SendProfiles()
 {
 	int size = m_vProfile->size();
-	SendHeader(PROFILE, sizeof(Profile) * size);
 	for(int i = 0; i < size; i++)
 	{
+
+		// SEND HEADER 
+		SendHeader(EXISTING_USER_IN_ROOM_PROFILE, sizeof(Profile));
+	
+		// PROFILE BODY
 		Send((char*)&m_vProfile->at(i), sizeof(Profile));
-		
-		// image send
+
+		// IMAGE BODY
 		CFile imageFile;
 		byte* imageData = new byte[4096];
 		DWORD dwRead;
-		
+
 		CString imageName;
-		if(i == 0) // Server
+		if(i == 0) // Server profile image
 			imageName.Format("profileImage\\%s", m_vProfile->at(i).imageName);
 		else
-			imageName.Format("profileImage\\server\\%s", m_vProfile->at(i).imageName); // Client
-		
+			imageName.Format("profileImage\\server\\%s", m_vProfile->at(i).imageName); // client profile image path
+
 		imageFile.Open(imageName, CFile::modeRead | CFile::typeBinary);
 
 		ULONGLONG imageSize = imageFile.GetLength();
-
 		Send(&imageSize, sizeof(ULONGLONG));
 
 		do{
 			dwRead = imageFile.Read(imageData, 4096);
 
 			Send(imageData, dwRead);
-			
+
 		}while(dwRead > 0);
-		
-		byte result;
-		Receive(&result, sizeof(byte)); 
 
 		delete imageData;
-		imageFile.Close();
+		imageFile.Close();	
+
+		// RECV RESULT RESPONSE
+		Response response = RecvResponse();
+		if(response.command != EXISTING_USER_IN_ROOM_PROFILE)
+			AfxMessageBox("EXISTING_USER_IN_ROOM_PROFILE COM ERROR!!");
 	}
 }
 
@@ -219,12 +285,23 @@ CString CServerSocket::RecvString(int dataSize)
 	return str;
 }
 
+Response CServerSocket::RecvResponse()
+{
+	Response response;
+	Receive(&response, sizeof(Response));
+	return response;
+}
+
 void CServerSocket::OnReceive(int nErrorCode)
 {
 	Header header;
 	Receive(&header, sizeof(Header));
+
 	byte result = 1;
 	Send(&result, sizeof(byte));
+
+	if(header.startBit != 0x21) // START BIT CHECK
+		return;
 
 	switch(header.command)
 	{
@@ -232,7 +309,10 @@ void CServerSocket::OnReceive(int nErrorCode)
 		{
 			Point point;
 			Receive(&point, header.dataSize);
-			
+
+			byte result = 1;
+			Send(&result, sizeof(byte));
+
 			POSITION pos = m_pServerSocketList->GetHeadPosition();
 			while (pos != NULL) {
 				CServerSocket* serverSocket = (CServerSocket*)m_pServerSocketList->GetNext(pos);
@@ -243,7 +323,6 @@ void CServerSocket::OnReceive(int nErrorCode)
 			}
 			//((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->RecvDraw(point);
 			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_DRAW, 0, (LPARAM)&point);
-			
 			break;
 		}
 	case MESSAGE :
@@ -264,12 +343,12 @@ void CServerSocket::OnReceive(int nErrorCode)
 				SendOtherMode(0); // OhterClient Mode : 0
 				SendMode(1); // Correct Answer Client Mode : 1
 				((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(0); // Server Mode : 0
-				
+
 				// Set New Quiz
 				CString newQuiz = g_dataBase.SelectRandomQuiz();
 				g_listenSocket.m_quiz = newQuiz;
-				SendOhterQuiz(newQuiz);
-				SendQuiz(newQuiz);
+				/*SendOhterQuiz(newQuiz);
+				SendQuiz(newQuiz);*/
 				((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetQuiz(newQuiz);
 			}
 			else // Chatting
@@ -279,21 +358,23 @@ void CServerSocket::OnReceive(int nErrorCode)
 			}
 			break;
 		}
-	case PROFILE :
+	case JOINED_NEW_USER_PROFILE :
 		{
+			//RECV PROFILE BODY
 			Profile profile;
-			Receive((char*)&profile, header.dataSize);
+			Receive(&profile, header.dataSize);
+
+			// RECV IMAGE BODY & LOGIC
 			m_profile = profile;
 			m_vProfile->push_back(profile);
 
 			ULONGLONG fileSize;
 			Receive(&fileSize, sizeof(ULONGLONG));
-			
-			// image save
+
 			byte* imageData = new byte[4096];
 			DWORD dwRead;
 			ULONGLONG receiveSize = 0;
-			
+
 			CString imageName = profile.imageName;
 			CString imagePath = "profileImage\\server\\" + imageName;
 
@@ -309,7 +390,10 @@ void CServerSocket::OnReceive(int nErrorCode)
 
 			delete imageData;
 			file.Close();
-			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_ONE_USER_PROFILE, 0, (LPARAM)&profile);
+			
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
+			// SEND RESULT RESPONSE
+			SendResponse(JOINED_NEW_USER_PROFILE, 1);
 
 			SendOtherProfile(profile);
 			break;

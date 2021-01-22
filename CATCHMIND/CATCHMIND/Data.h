@@ -45,3 +45,10 @@ typedef struct ChatMessage
 	char name[10];
 	char message[50];
 } ChatMessage;
+
+typedef struct Response
+{
+	byte command;
+	byte result;
+} Response;
+

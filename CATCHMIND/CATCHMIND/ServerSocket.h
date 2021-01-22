@@ -6,11 +6,13 @@
 #define PRIVATE_ROOM 0x42
 #define POINT 0x43
 #define MESSAGE 0x44
-#define PROFILE 0x45
-#define PROFILE2 0x46
-#define PROFILE_RECV_FROM_CLIENT 0x47
-#define QUIZ 0x48
-#define CHANGE_MODE 0x49
+#define EXISTING_USER_IN_ROOM_PROFILE 0x45
+#define JOINED_NEW_USER_PROFILE 0x46
+#define REQUEST_PROFILE 0x47
+#define PROFILE_RECV_FROM_CLIENT 0x48
+#define QUIZ 0x49
+#define CHANGE_MODE 0x50
+
 class CServerSocket : public CSocket
 {
 public:
@@ -20,12 +22,12 @@ public:
 	CObList* m_pServerSocketList;
 	std::vector<Profile>* m_vProfile;
 	Profile m_profile;
-
+	
+	void SendHeader(byte command, int dataSize);
+	void SendResponse(byte command, byte result);
 	void SendFullRoom();
 	void SendAccept();
 	void SendPrivate(CString password);
-	void SendHeader(byte command, int dataSize);
-	void SendResult(int result);
 	void SendChatMsg(CString name, CString message);
 	void SendQuiz(CString quiz);
 	void SendProfiles();
@@ -36,8 +38,11 @@ public:
 	void SendOtherMode(int mode);
 	void SendOhterQuiz(CString quiz);
 
+	void RequestProfile();
+
 	
 	CString RecvString(int dataSize);
+	Response RecvResponse();
 	virtual void OnReceive(int nErrorCode);
 	virtual void OnClose(int nErrorCode);
 };

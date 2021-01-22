@@ -28,22 +28,23 @@ void CListenSocket::OnAccept(int nErrorCode)
 		//AfxMessageBox("TRY ACCEPT");
 		//g_log.Log("TRY ACCEPT");
 		m_pServerSocketList.AddTail(serverSocket);
-
+		
 		if(m_userSize <= m_pServerSocketList.GetSize()) // FULL ROOM
 		{
 			serverSocket->SendFullRoom();
 			return;
 		}
+
 		if(m_privateRoom) // PROVIATE ROOM
 		{
 			serverSocket->SendPrivate(m_password);
 			return;
 		}
-
 		 // ACCEPT SUCCESS
-		serverSocket->SendAccept();
-		serverSocket->SendQuiz(g_listenSocket.m_quiz);
-		serverSocket->SendProfiles();
+		serverSocket->SendAccept(); // NOTICE ACCEPT
+		serverSocket->SendQuiz(g_listenSocket.m_quiz); // SEND QUIZ
+		serverSocket->SendProfiles(); // SEND PROFILES
+		serverSocket->RequestProfile(); // GIVE ME PROFILE
 	}
 	else
 	{

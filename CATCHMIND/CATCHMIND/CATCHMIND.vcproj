@@ -196,19 +196,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GameRoomDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Global.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\JoinRoomDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Log.cpp"
 				>
 			</File>
 			<File
@@ -268,6 +256,10 @@
 				>
 				<File
 					RelativePath=".\GameRoomDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\GameRoomDlg.h"
 					>
 				</File>
 				<File
@@ -335,6 +327,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\JoinRoomDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\JoinRoomDlg.h"
+					>
+				</File>
+				<File
 					RelativePath=".\PasswordDlg.cpp"
 					>
 				</File>
@@ -363,6 +363,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Log"
+				>
+				<File
+					RelativePath=".\Log.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Log.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="헤더 파일"
@@ -383,14 +395,6 @@
 			</File>
 			<File
 				RelativePath=".\Global.h"
-				>
-			</File>
-			<File
-				RelativePath=".\JoinRoomDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Log.h"
 				>
 			</File>
 			<File

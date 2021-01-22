@@ -11,7 +11,7 @@ IMPLEMENT_DYNAMIC(CWatingRoomDlg, CDialog)
 CWatingRoomDlg::CWatingRoomDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CWatingRoomDlg::IDD, pParent)
 {
-	
+
 }
 
 CWatingRoomDlg::~CWatingRoomDlg()
@@ -27,8 +27,6 @@ BEGIN_MESSAGE_MAP(CWatingRoomDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_CREATE_ROOM, &CWatingRoomDlg::OnBnClickedBtnCreateRoom)
 	ON_BN_CLICKED(IDC_BTN_JOIN_ROOM, &CWatingRoomDlg::OnBnClickedBtnJoinRoom)
 	ON_BN_CLICKED(IDC_BTN_CREATE_ROOM_SERIAL, &CWatingRoomDlg::OnBnClickedBtnCreateRoomSerial)
-	ON_MESSAGE(WM_DISCONNECT, CWatingRoomDlg::OnDisConnect)
-	ON_MESSAGE(WM_ACCEPT, CWatingRoomDlg::OnAccept)
 END_MESSAGE_MAP()
 
 
@@ -61,10 +59,10 @@ void CWatingRoomDlg::OnBnClickedBtnCreateRoom()
 			strcpy_s(profile.imageName, g_member.imageName);
 			g_listenSocket.m_vProfile.push_back(profile);
 			
-			::SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_ONE_USER_PROFILE, 0, (LPARAM)&profile);
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(1);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetQuiz(quiz);
-			((CCATCHMINDDlg*)GetParent())->ChangeDlg(WATING_ROOM, GAME_ROOM);
+			((CCATCHMINDDlg*)AfxGetMainWnd())->ChangeDlg(WATING_ROOM, GAME_ROOM);
 
 			AfxMessageBox("ROOM CREATE SUCCESS");
 			g_logManager.Log("ROOM CREATE SUCCESS");
@@ -93,34 +91,42 @@ void CWatingRoomDlg::OnBnClickedBtnJoinRoom()
 	}
 }
 
-// Message Room Join Fail
-LRESULT CWatingRoomDlg::OnDisConnect( WPARAM wParam, LPARAM lParam )
+// Notice Full Room 
+void CWatingRoomDlg::NoticeFullRoom()
 {
-	AfxMessageBox("ROOM JOIN FAIL : ROOM FULL OR INCORRECT PASSWORD");
-	g_logManager.Log("ROOM JOIN FAIL : ROOM FULL OR INCORRECT PASSWORD");
-	return 0;
+	AfxMessageBox("ROOM JOIN FAIL : ROOM FULL");
+	g_logManager.Log("ROOM JOIN FAIL : ROOM FULL");
 }
 
-// Message Room join Success
-LRESULT CWatingRoomDlg::OnAccept( WPARAM wParam, LPARAM lParam )
+// Notice Password Incorrect
+void CWatingRoomDlg::NoticeIncorrectPassword()
+{
+	AfxMessageBox("ROOM JOIN FAIL : PASSWORD INCORRECT OR CANCEL");
+	g_logManager.Log("ROOM JOIN FAIL : PASSWORD INCORRECT OR CANCEL");
+}
+
+// Notice Room join Success
+void CWatingRoomDlg::NoticeAccept()
 {
 	g_clientSocket.m_connected = TRUE;
-	((CCATCHMINDDlg*)GetParent())->ChangeDlg(WATING_ROOM, GAME_ROOM);
-	((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(0);
-	
+
 	Profile profile;
 	strcpy_s(profile.id, g_member.id);
 	strcpy_s(profile.name, g_member.name);
 	strcpy_s(profile.imageName, g_member.imageName);
 	g_clientSocket.m_vProfile.push_back(profile);
 	
+
+	((CCATCHMINDDlg*)AfxGetMainWnd())->ChangeDlg(WATING_ROOM, GAME_ROOM);
+	((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(0);
+	((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
+
 	AfxMessageBox("ROOM JOIN SUCCESS");
 	g_logManager.Log("ROOM JOIN SUCCESS");
-	return 0;
 }
 
 
-// Create Room Nomal Mode (Serial)
+// Create Room Normal Mode (Serial)
 void CWatingRoomDlg::OnBnClickedBtnCreateRoomSerial()
 {
 	CCreateRoomSerialDlg CreateRoomSerial;

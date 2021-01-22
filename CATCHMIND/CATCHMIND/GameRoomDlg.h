@@ -1,6 +1,7 @@
 #pragma once
 #include "afxwin.h"
 #include "Data.h"
+#include <vector>
 // CGameRoomDlg 대화 상자입니다.
 
 class CGameRoomDlg : public CDialog
@@ -26,7 +27,7 @@ public:
 	int m_mode;
 
 	CListBox ctrl_listChatMsg;
-	CListBox ctrl_listUser;
+	CListBox ctrl_listProfile;
 	CComboBox ctrl_comThinkness;
 	CComboBox ctrl_comColor;
 	CEdit ctrl_editQuiz;
@@ -34,6 +35,8 @@ public:
 	virtual BOOL OnInitDialog();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	void AddProfileToList(Profile* profile);
+	void AddProfilesToList(std::vector<Profile>* vProfile);
 	void SetMode(int mode);
 	void SetQuiz(CString quiz);
 
@@ -50,7 +53,4 @@ public:
 	afx_msg LRESULT OnDisConnect( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnRecvChatMsg(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnDraw(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnUserProfileSave( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnOneUserProfileSave(WPARAM wParam, LPARAM lParam);
-	
 };

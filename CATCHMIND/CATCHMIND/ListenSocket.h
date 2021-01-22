@@ -16,7 +16,7 @@ public:
 	CString m_quiz;
 
 	CObList m_pServerSocketList;
-	std::vector<Profile> m_vProfile;
+	std::vector<Profile> m_vProfile; // Room Users Profiles
 
 	void OnAccept(int nErrorCode);
 

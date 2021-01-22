@@ -25,7 +25,7 @@ void CGameRoomDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_MESSAGE, ctrl_listChatMsg);
-	DDX_Control(pDX, IDC_LIST_USER, ctrl_listUser);
+	DDX_Control(pDX, IDC_LIST_USER, ctrl_listProfile);
 	DDX_Control(pDX, IDC_COMBO_THINKNESS, ctrl_comThinkness);
 	DDX_Control(pDX, IDC_COMBO_COLOR, ctrl_comColor);
 	DDX_Control(pDX, IDC_EDIT_QUIZ, ctrl_editQuiz);
@@ -40,8 +40,6 @@ BEGIN_MESSAGE_MAP(CGameRoomDlg, CDialog)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
 	ON_MESSAGE(WM_RECV_MESSAGE, &CGameRoomDlg::OnRecvChatMsg)
-	ON_MESSAGE(WM_USER_PROFILE, &CGameRoomDlg::OnUserProfileSave)
-	ON_MESSAGE(WM_ONE_USER_PROFILE, &CGameRoomDlg::OnOneUserProfileSave)
 	ON_MESSAGE(WM_DRAW, &CGameRoomDlg::OnDraw)
 END_MESSAGE_MAP()
 
@@ -139,18 +137,26 @@ LRESULT CGameRoomDlg::OnRecvChatMsg( WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-// Show List One User Profile 
-LRESULT CGameRoomDlg::OnOneUserProfileSave(WPARAM wParam, LPARAM lParam)
+
+// Add One User Profile To List
+void CGameRoomDlg::AddProfileToList(Profile* profile)
 {
-	Profile* profile = (Profile* )lParam;
-	ctrl_listUser.AddString(profile->name);
-	return 0;
+	ctrl_listProfile.AddString(profile->name);
+}
+
+// Add User Profiles To List
+void CGameRoomDlg::AddProfilesToList(std::vector<Profile>* vProfile)
+{
+	for(size_t i = 0; i < vProfile->size(); i++)
+	{
+		ctrl_listProfile.AddString(vProfile->at(i).name);
+	}
 }
 
 // Profile Button Event
 void CGameRoomDlg::OnBnClickedBtnProfile()
 {
-	int index = ctrl_listUser.GetCurSel();
+	int index = ctrl_listProfile.GetCurSel();
 	if(index == -1)
 	{
 		AfxMessageBox("PLEASE SELECT USER");
@@ -185,16 +191,9 @@ void CGameRoomDlg::OnBnClickedBtnProfile()
 	profileDlg.DoModal();
 }
 
-// Show List User Profiles 
-LRESULT CGameRoomDlg::OnUserProfileSave( WPARAM wParam, LPARAM lParam )
-{
-	std::vector<Profile>* vProfile = (std::vector<Profile> *)lParam;
-	for(size_t i = 0; i < vProfile->size(); i++)
-	{
-		ctrl_listUser.AddString(vProfile->at(i).name);
-	}
-	return 0;
-}
+
+
+
 
 // Message Draw
 LRESULT CGameRoomDlg::OnDraw( WPARAM wParam, LPARAM lParam )
@@ -225,7 +224,7 @@ void CGameRoomDlg::OnLButtonDown(UINT nFlags, CPoint point)
 		return;
 
 	m_lButtonClick = TRUE;
-	SetCapture();
+	//SetCapture();
 	m_prePoint = point;
 	
 	CClientDC dc(this);
@@ -325,7 +324,7 @@ void CGameRoomDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CGameRoomDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	m_lButtonClick = FALSE;
-	ReleaseCapture();
+	//ReleaseCapture();
 	CDialog::OnLButtonUp(nFlags, point);
 }
 
