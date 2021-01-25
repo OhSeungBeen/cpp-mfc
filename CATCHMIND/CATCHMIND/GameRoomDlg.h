@@ -12,7 +12,7 @@ public:
 	CGameRoomDlg(CWnd* pParent = NULL);   // 표준 생성자입니다.
 	virtual ~CGameRoomDlg();
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 	enum { IDD = IDD_GAMEROOM_DIALOG };
 
 protected:
@@ -37,8 +37,10 @@ public:
 
 	void AddProfileToList(Profile* profile);
 	void AddProfilesToList(std::vector<Profile>* vProfile);
+	void AddMessageToList(CString name, CString message);
 	void SetMode(int mode);
 	void SetQuiz(CString quiz);
+	void Draw(Point* point);
 
 	afx_msg void OnBnClickedBtnSendMessage();
 	afx_msg void OnBnClickedBtnProfile();
@@ -49,8 +51,9 @@ public:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnCbnSelchangeComboThinkness();
 	afx_msg void OnCbnSelchangeComboColor();
-	
+	afx_msg void OnBnClickedBtnClear();
+	afx_msg void OnBnClickedBtnSerialModeOrder();
+
 	afx_msg LRESULT OnDisConnect( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnRecvChatMsg(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnDraw(WPARAM wParam, LPARAM lParam);
+
 };

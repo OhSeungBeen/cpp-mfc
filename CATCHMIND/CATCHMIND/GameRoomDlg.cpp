@@ -8,7 +8,7 @@
 IMPLEMENT_DYNAMIC(CGameRoomDlg, CDialog)
 
 CGameRoomDlg::CGameRoomDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CGameRoomDlg::IDD, pParent)
+: CDialog(CGameRoomDlg::IDD, pParent)
 {
 	m_lButtonClick = FALSE;
 	m_thickness = 1;
@@ -18,7 +18,7 @@ CGameRoomDlg::CGameRoomDlg(CWnd* pParent /*=NULL*/)
 
 CGameRoomDlg::~CGameRoomDlg()
 {
-	
+
 }
 
 void CGameRoomDlg::DoDataExchange(CDataExchange* pDX)
@@ -39,8 +39,8 @@ BEGIN_MESSAGE_MAP(CGameRoomDlg, CDialog)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
-	ON_MESSAGE(WM_RECV_MESSAGE, &CGameRoomDlg::OnRecvChatMsg)
-	ON_MESSAGE(WM_DRAW, &CGameRoomDlg::OnDraw)
+	ON_BN_CLICKED(IDC_BTN_CLEAR, &CGameRoomDlg::OnBnClickedBtnClear)
+	ON_BN_CLICKED(IDC_BTN_SERIAL_MODE_ORDER, &CGameRoomDlg::OnBnClickedBtnSerialModeOrder)
 END_MESSAGE_MAP()
 
 BOOL CGameRoomDlg::OnInitDialog()
@@ -78,6 +78,7 @@ void CGameRoomDlg::OnBnClickedBtnSendMessage()
 		strTemp.Format("[%s] %s", g_member.id, message);
 		int index = ctrl_listChatMsg.AddString(strTemp);
 		ctrl_listChatMsg.SetCurSel(index);
+		SetDlgItemText(IDC_EDIT_SEND_MESSAGE, "");
 		return;
 	}
 
@@ -87,16 +88,15 @@ void CGameRoomDlg::OnBnClickedBtnSendMessage()
 		if(preQuiz == message) // correct answer
 		{
 			CString newQuiz = g_dataBase.SelectRandomQuiz();
-			CString strTemp;
 
 			g_listenSocket.m_quiz = newQuiz;
 			g_listenSocket.SendAllQuiz(newQuiz);
 			g_listenSocket.SendAllMode(0);
-			
+
 			CString managerName = "MANAGER";
 			message.Format("* * *%s Answer!! : %s * * *",g_member.name, message);
 			g_listenSocket.SendAllChatMsg(managerName, message);
-	
+
 			SetQuiz(newQuiz);
 			SetMode(1);
 			int index = ctrl_listChatMsg.AddString("[" + managerName + "]" + message);
@@ -109,33 +109,54 @@ void CGameRoomDlg::OnBnClickedBtnSendMessage()
 			strTemp.Format("[%s] %s", g_member.id, message);
 			int index = ctrl_listChatMsg.AddString(strTemp);
 			ctrl_listChatMsg.SetCurSel(index);
+			SetDlgItemText(IDC_EDIT_SEND_MESSAGE, "");
 		}
 		return;
 	}
-	
+
 	// SERIAL
 	if(g_serial.m_connected)
 	{
-		g_serial.WriteChatMessage(g_member.id, message);
-		CString strTemp;
-		strTemp.Format("[%s] %s", g_member.id, message);
-		int index = ctrl_listChatMsg.AddString(strTemp);
-		ctrl_listChatMsg.SetCurSel(index);
+		CString oldQuiz;
+		GetDlgItemText(IDC_EDIT_QUIZ, oldQuiz);
+		
+		if(oldQuiz == message) // correct answer
+		{
+			CString newQuiz = g_dataBase.SelectRandomQuiz();
+			
+			g_serial.WriteQuiz(newQuiz);
+			g_serial.WriteMode(0);
+
+			CString managerName = "MANAGER";
+			message.Format("* * *%s Answer!! : %s * * *",g_member.name, message);
+			g_serial.WriteChatMessage(managerName, message);
+
+			SetQuiz(newQuiz);
+			SetMode(1);
+			int index = ctrl_listChatMsg.AddString("[" + managerName + "]" + message);
+			ctrl_listChatMsg.SetCurSel(index);
+			SetDlgItemText(IDC_EDIT_SEND_MESSAGE, "");
+		}
+		else
+		{
+			g_serial.WriteChatMessage(g_member.id, message);
+			CString strTemp;
+			strTemp.Format("[%s] %s", g_member.id, message);
+			int index = ctrl_listChatMsg.AddString(strTemp);
+			ctrl_listChatMsg.SetCurSel(index);
+			SetDlgItemText(IDC_EDIT_SEND_MESSAGE, "");
+		}
 	}
 }
 
-
-// Receive Chatting Message
-LRESULT CGameRoomDlg::OnRecvChatMsg( WPARAM wParam, LPARAM lParam )
+void CGameRoomDlg::AddMessageToList(CString name, CString message)
 {
-	CString* name = (CString*)wParam;
-	CString* message = (CString*)lParam;
 	CString strTemp;
-	strTemp.Format("[%s] %s",*name, *message);
+	strTemp.Format("[%s] %s",name, message);
 	int index = ctrl_listChatMsg.AddString(strTemp);
 	ctrl_listChatMsg.SetCurSel(index);
-	return 0;
 }
+
 
 
 // Add One User Profile To List
@@ -170,7 +191,7 @@ void CGameRoomDlg::OnBnClickedBtnProfile()
 	// TCP/IP
 	if(g_clientSocket.m_connected) // CLIENT
 	{
-		
+
 		name = g_clientSocket.m_vProfile[index].name;
 		id = g_clientSocket.m_vProfile[index].id;
 		if(index == 0)
@@ -187,20 +208,23 @@ void CGameRoomDlg::OnBnClickedBtnProfile()
 		else
 			imageName.Format("server\\%s", g_listenSocket.m_vProfile[index].imageName);
 	}
-	CProfileDlg profileDlg(NULL, name, id, imageName);
+	else if(g_serial.m_connected)
+	{
+		name = g_serial.m_vProfile[index].name;
+		id = g_serial.m_vProfile[index].id;
+		if(index == 0)
+			imageName.Format("%s", g_serial.m_vProfile[index].imageName);
+		else
+			imageName.Format("client\\%s", g_serial.m_vProfile[index].imageName);
+	}
+	CProfileDlg profileDlg(name, id, imageName);
 	profileDlg.DoModal();
 }
 
-
-
-
-
-// Message Draw
-LRESULT CGameRoomDlg::OnDraw( WPARAM wParam, LPARAM lParam )
+void CGameRoomDlg::Draw(Point* point)
 {
 	CClientDC dc(this);
-	Point* point = (Point*)lParam;
-	
+
 	CPoint startPoint, endPoint;
 	startPoint.SetPoint(point->startX, point->startY);
 	endPoint.SetPoint(point->endX, point->endY);
@@ -213,7 +237,6 @@ LRESULT CGameRoomDlg::OnDraw( WPARAM wParam, LPARAM lParam )
 	dc.LineTo(endPoint);
 
 	dc.SelectObject(oldPen);
-	return 0;
 }
 
 // Mouse L Button Down
@@ -226,7 +249,7 @@ void CGameRoomDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	m_lButtonClick = TRUE;
 	//SetCapture();
 	m_prePoint = point;
-	
+
 	CClientDC dc(this);
 
 	// draw in picture control
@@ -248,7 +271,9 @@ void CGameRoomDlg::OnLButtonDown(UINT nFlags, CPoint point)
 
 	dc.MoveTo(point);
 	dc.LineTo(point);
-	
+
+
+
 	// TCP/IP
 	if(g_listenSocket.m_connected)// Server
 		g_listenSocket.SendAllPoint(m_prePoint, point, m_thickness, m_rgb);
@@ -274,7 +299,7 @@ void CGameRoomDlg::OnMouseMove(UINT nFlags, CPoint point)
 	if(m_lButtonClick)
 	{
 		CClientDC dc(this);
-		
+
 		// draw in picture control	
 		CRect rect;
 		GetDlgItem(IDC_STATIC_PANEL)->GetWindowRect(&rect);
@@ -302,7 +327,7 @@ void CGameRoomDlg::OnMouseMove(UINT nFlags, CPoint point)
 
 		dc.MoveTo(m_prePoint);
 		dc.LineTo(point);
-		
+
 		// TCP/IP
 		if(g_listenSocket.m_connected)// Server
 			g_listenSocket.SendAllPoint(m_prePoint, point, m_thickness, m_rgb);
@@ -347,6 +372,7 @@ void CGameRoomDlg::SetMode(int mode)
 	{
 		SetDlgItemText(IDC_STATIC_MODE, "그림을 보고 문제를 맞히세요!");
 		GetDlgItem(IDC_EDIT_QUIZ)->ShowWindow(FALSE);
+		GetDlgItem(IDC_BTN_SERIAL_MODE_ORDER)->ShowWindow(FALSE);
 	}
 }
 
@@ -396,7 +422,23 @@ BOOL CGameRoomDlg::PreTranslateMessage(MSG* pMsg)
 			OnBnClickedBtnSendMessage();
 			return TRUE;
 		}
-		
 	}
 	return CDialog::PreTranslateMessage(pMsg);
+}
+
+void CGameRoomDlg::OnBnClickedBtnClear()
+{
+	CClientDC dc(this);
+}
+
+
+void CGameRoomDlg::OnBnClickedBtnSerialModeOrder()
+{
+	CString quiz = g_dataBase.SelectRandomQuiz();
+
+	g_serial.WriteMode(0);
+	g_serial.WriteQuiz(quiz);
+
+	GetDlgItem(IDC_BTN_SERIAL_MODE_ORDER)->ShowWindow(FALSE);
+	SetDlgItemText(IDC_EDIT_QUIZ, quiz);
 }

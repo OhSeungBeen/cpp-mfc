@@ -27,8 +27,6 @@ void CServerSocket::SendHeader(byte command, int dataSize)
 	header.command = command;
 	header.dataSize = dataSize;
 	Send((char*)&header, sizeof(Header));
-	byte result;
-	Receive(&result, sizeof(byte));
 }
 
 void CServerSocket::SendResponse(byte command, byte result)
@@ -92,8 +90,17 @@ void CServerSocket::SendChatMsg(CString name, CString message)
 	ChatMessage chatMessage;
 	strcpy_s(chatMessage.name, name);
 	strcpy_s(chatMessage.message, message);
+
+	// SEND HEADER
 	SendHeader(MESSAGE, sizeof(ChatMessage));
+
+	// SEND BODY
 	Send((char*)&chatMessage, sizeof(ChatMessage));
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != MESSAGE)
+		AfxMessageBox("MESSAGE COM ERROR!!");
 }
 
 // Send Point (Draw)
@@ -107,10 +114,16 @@ void CServerSocket::SendPoint(CPoint startPoint, CPoint endPoint, int thinkness,
 	point.thinkness = thinkness;
 	point.rgb = rgb;
 
+	// SEND HEADER
 	SendHeader(POINT, sizeof(Point));
+
+	// SEND BODY
 	Send(&point, sizeof(Point));
-	byte result;
-	Receive(&result, sizeof(byte));
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != POINT)
+		AfxMessageBox("POINT COM ERROR!!");
 }
 
 // Send Quiz
@@ -125,11 +138,11 @@ void CServerSocket::SendQuiz(CString quiz)
 
 	// SEND BODY
 	Send(pQuiz, quizSize);
-	
+
 	// RECV RESULT RESPONSE
 	Response response = RecvResponse();
 	if(response.command != QUIZ)
-		AfxMessageBox("ACCEPT COM ERROR!!");
+		AfxMessageBox("QUIZ COM ERROR!!");
 
 	delete[] pQuiz;
 }
@@ -173,8 +186,17 @@ void CServerSocket::SendOhterQuiz(CString quiz)
 
 void CServerSocket::SendMode(int mode)
 {
+	// SEND HEADER
 	SendHeader(CHANGE_MODE, sizeof(int));
+
+	// SEND BODY
 	Send(&mode, sizeof(int));
+
+	// RECV RESULT RESPONSE
+	Response response;
+	Receive(&response, sizeof(Response));
+	if(response.command != CHANGE_MODE)
+		AfxMessageBox("CHANGE_MODE COM ERROR!!");
 }
 
 // Send OtherClient Profile Received Profile
@@ -209,8 +231,10 @@ void CServerSocket::SendOtherProfile(Profile profile)
 
 		delete imageData;
 		imageFile.Close();
+
 		// RECV RESULT RESPONSE
-		Response response = RecvResponse();
+		Response response;
+		serverSocket->Receive(&response, sizeof(Response));
 		if(response.command != JOINED_NEW_USER_PROFILE)
 			AfxMessageBox("JOINED_NEW_USER_PROFILE COM ERROR!!");
 	}
@@ -221,12 +245,11 @@ void CServerSocket::RequestProfile()
 	// SEND HEADER
 	SendHeader(REQUEST_PROFILE, 0);
 	// BODY X
-	
-	//
+
 	// RECV RESULT RESPONSE
-	/*Response response = RecvResponse();
+	Response response = RecvResponse();
 	if(response.command != REQUEST_PROFILE)
-		AfxMessageBox("REQUEST_PROFILE COM ERROR!!");*/
+		AfxMessageBox("REQUEST_PROFILE COM ERROR!!");
 }
 
 // Send Client OtherClientProfile and ServerProfile (include image data)
@@ -238,7 +261,7 @@ void CServerSocket::SendProfiles()
 
 		// SEND HEADER 
 		SendHeader(EXISTING_USER_IN_ROOM_PROFILE, sizeof(Profile));
-	
+
 		// PROFILE BODY
 		Send((char*)&m_vProfile->at(i), sizeof(Profile));
 
@@ -297,9 +320,6 @@ void CServerSocket::OnReceive(int nErrorCode)
 	Header header;
 	Receive(&header, sizeof(Header));
 
-	byte result = 1;
-	Send(&result, sizeof(byte));
-
 	if(header.startBit != 0x21) // START BIT CHECK
 		return;
 
@@ -307,28 +327,38 @@ void CServerSocket::OnReceive(int nErrorCode)
 	{
 	case POINT :
 		{
+			//RECV BODY
 			Point point;
 			Receive(&point, header.dataSize);
 
-			byte result = 1;
-			Send(&result, sizeof(byte));
+			// SEND RESPONSE
+			SendResponse(POINT, 0);
 
 			POSITION pos = m_pServerSocketList->GetHeadPosition();
 			while (pos != NULL) {
 				CServerSocket* serverSocket = (CServerSocket*)m_pServerSocketList->GetNext(pos);
+
+				// SEND HEADER
 				serverSocket->SendHeader(POINT, sizeof(Point));
+				// SEND BODY
 				serverSocket->Send((char*)&point, sizeof(Point));
-				byte result;
-				Receive(&result, sizeof(byte));
+				// RECV RESULT RESPONSE
+				Response response = serverSocket->RecvResponse();
+				if(response.command != POINT)
+					AfxMessageBox("POINT COM ERROR!!");
 			}
-			//((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->RecvDraw(point);
-			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_DRAW, 0, (LPARAM)&point);
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->Draw(&point);
 			break;
 		}
 	case MESSAGE :
 		{	
+			// RECV BODY
 			ChatMessage chatMessage;
 			Receive((char*)&chatMessage, header.dataSize);
+
+			// SEND RESPONSE
+			SendResponse(MESSAGE, 1);
+
 			CString name = (LPSTR)chatMessage.name;
 			CString message = (LPSTR)chatMessage.message;
 			CString preQuiz = g_listenSocket.m_quiz;
@@ -338,7 +368,7 @@ void CServerSocket::OnReceive(int nErrorCode)
 				CString managerName = "MANAGER";
 				message.Format("* * *%s Answer!! : %s * * *",name, message);
 				g_listenSocket.SendAllChatMsg(managerName, message);
-				SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_RECV_MESSAGE, (WPARAM)&managerName, (LPARAM)&message);
+				((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddMessageToList(managerName, message);
 				// Alter Mode
 				SendOtherMode(0); // OhterClient Mode : 0
 				SendMode(1); // Correct Answer Client Mode : 1
@@ -347,14 +377,14 @@ void CServerSocket::OnReceive(int nErrorCode)
 				// Set New Quiz
 				CString newQuiz = g_dataBase.SelectRandomQuiz();
 				g_listenSocket.m_quiz = newQuiz;
-				/*SendOhterQuiz(newQuiz);
-				SendQuiz(newQuiz);*/
+				SendOhterQuiz(newQuiz);
+				SendQuiz(newQuiz);
 				((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetQuiz(newQuiz);
 			}
 			else // Chatting
 			{
 				SendOtherChatMsg(name, message);
-				SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_RECV_MESSAGE, (WPARAM)&name, (LPARAM)&message);
+				((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddMessageToList(name, message);
 			}
 			break;
 		}
@@ -390,7 +420,7 @@ void CServerSocket::OnReceive(int nErrorCode)
 
 			delete imageData;
 			file.Close();
-			
+
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
 			// SEND RESULT RESPONSE
 			SendResponse(JOINED_NEW_USER_PROFILE, 1);

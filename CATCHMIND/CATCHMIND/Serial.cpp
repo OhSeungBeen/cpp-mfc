@@ -126,7 +126,6 @@ BOOL CSerial::DestoryCom()
 		CloseHandle(m_comHandle);
 		m_connected = FALSE;
 	}
-
 	CloseHandle(m_osRead.hEvent);
 	CloseHandle(m_osWrite.hEvent);
 	return TRUE;
@@ -164,23 +163,96 @@ DWORD ComThread(LPVOID lpData)
 					continue;
 				switch (header.command)
 				{
-				case MESSAGE : // 채팅 메시지
+				case MESSAGE : 
 					{
 						ChatMessage chatMessage;
 						pSerial->ReadCom((char*)&chatMessage, header.dataSize);
 						CString name = (LPSTR)chatMessage.name;
 						CString message = (LPSTR)chatMessage.message;
-						SendMessage(((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->m_hWnd, WM_RECV_MESSAGE, (WPARAM)&name, (LPARAM)&message);
+						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->AddMessageToList(name, message);
+						break;				
 					}
-				case POINT : //  점 (그리기)
+				case POINT :
 					{
 						Point point;
 						pSerial->ReadCom((char*)&point, header.dataSize);
-						SendMessage(((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->m_hWnd, WM_DRAW, 0, (LPARAM)&point);
+						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->Draw(&point);
+						break;
 					}
+				case JOINED_NEW_USER_PROFILE :
+					{
+						// RECV PROFILE BODY
+						Profile profile;
+						pSerial->ReadCom((char*)&profile, header.dataSize);
+						pSerial->m_vProfile.push_back(profile);
 
+						byte* imageData = new byte[4096];
+						DWORD dwRead;
+						ULONGLONG receiveSize = 0;
+
+						CString imageName = profile.imageName;
+						CString imagePath = "profileImage\\client\\" + imageName;
+						CFile file;
+						file.Open(imagePath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
+						while(dwRead = pSerial->ReadCom((LPSTR)imageData, 4096))
+						{
+							file.Write(imageData, dwRead);
+						}
+
+						delete imageData;
+						file.Close();
+						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->AddProfileToList(&profile);
+
+						//g_serial.WriteProfile(PROFILE_RECV_FROM_CLIENT);
+						break;
+					}
+				case PROFILE_RECV_FROM_CLIENT :
+					{
+						// RECV PROFILE BODY
+						Profile profile;
+						pSerial->ReadCom((char*)&profile, header.dataSize);
+						pSerial->m_vProfile.push_back(profile);
+
+						byte* imageData = new byte[4096];
+						DWORD dwRead;
+
+						CString imageName = profile.imageName;
+						CString imagePath = "profileImage\\client\\" + imageName;
+						CFile file;
+						file.Open(imagePath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
+						while(dwRead = pSerial->ReadCom((LPSTR)imageData, 4096))
+						{
+							file.Write(imageData, dwRead);
+						}
+
+						delete imageData;
+						file.Close();
+						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->AddProfileToList(&profile);
+						break;
+					}
+				case CHANGE_MODE :
+					{
+						// RECV BODY
+						int mode;
+						pSerial->ReadCom((LPSTR)&mode, header.dataSize);
+						// LOGIC
+						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->SetMode(mode);
+						break;
+					}
+				case QUIZ :
+					{
+						// RECV BODY
+						char* pChar = new char[header.dataSize];
+						pSerial->ReadCom(pChar, header.dataSize);
+						CString quiz = (LPSTR)pChar;
+						delete[] pChar;
+
+						// LOGIC
+						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->SetQuiz(quiz);
+
+						break;
+					}
 				}
-				
 			}
 		} 
 	} 
@@ -210,13 +282,12 @@ int CSerial::ReadCom(LPSTR lpszData, int maxLength)
 	return dwLength;
 }
 
-// 컴포트로부터 데이터 송신
+// Data Write
 BOOL CSerial::WriteCom(LPSTR lpByte, DWORD dwBytesToWrite)
 {
 	BOOL writeState;
 	DWORD dwBytesWritten;
 	writeState = WriteFile(m_comHandle, lpByte, dwBytesToWrite, &dwBytesWritten, &m_osWrite);
-
 	if(writeState)
 	{
 		AfxMessageBox("Write Error");
@@ -224,7 +295,7 @@ BOOL CSerial::WriteCom(LPSTR lpByte, DWORD dwBytesToWrite)
 	return TRUE;
 }
 
-// 헤더 전송
+// Write Header
 void CSerial::WriteHeader(byte command, int dataSize)
 {
 	Header header;
@@ -234,7 +305,7 @@ void CSerial::WriteHeader(byte command, int dataSize)
 	WriteCom((char*)&header, sizeof(Header));
 }
 
-// 채팅메세지 전송
+// Write Chatting Message
 void CSerial::WriteChatMessage(CString name, CString message)
 {
 	ChatMessage chatMessage;
@@ -245,7 +316,24 @@ void CSerial::WriteChatMessage(CString name, CString message)
 	WriteCom((char*)&chatMessage, sizeof(ChatMessage));
 }
 
-// 점 (그리기) 전송
+// Write Quiz
+void CSerial::WriteQuiz(CString quiz)
+{
+	int quizSize= quiz.GetLength() + 1;
+	char *pQuiz = new char[quizSize];
+	memcpy(pQuiz, quiz.GetBuffer(), quizSize);
+
+	// SEND HEADER
+	WriteHeader(QUIZ, quizSize);
+
+	// SEND BODY
+	WriteCom(pQuiz, quizSize);
+
+	delete[] pQuiz;
+}
+
+
+// Write Point (Draw)
 void CSerial::WritePoint(CPoint startPoint, CPoint endPoint, int thinkness, COLORREF rgb)
 {
 	Point point;
@@ -260,6 +348,44 @@ void CSerial::WritePoint(CPoint startPoint, CPoint endPoint, int thinkness, COLO
 	WriteCom((char*)&point, sizeof(Point));
 }
 
+// Write Game Mode
+void CSerial::WriteMode(int mode)
+{
+	// SEND HEADER
+	WriteHeader(CHANGE_MODE, sizeof(int));
+	// SEND BODY
+	WriteCom((LPSTR)&mode, sizeof(int));
+}
+
+// Write Profile (Draw)
+void CSerial::WriteProfile(byte command)
+{
+	// SEND HEADER
+	WriteHeader(command, sizeof(Profile));
+
+	// SEND PROFILE BODY
+	Profile profile;
+	strcpy_s(profile.name, g_member.name);
+	strcpy_s(profile.id, g_member.id);
+	strcpy_s(profile.imageName, g_member.imageName);
+	WriteCom((char*)&profile, sizeof(Profile));
+
+	// SEND IMAGE BODY
+	CFile imageFile;
+	byte* imageData = new byte[4096];
+	DWORD dwRead;
+
+	CString imageName;
+	imageName.Format("profileImage\\%s", g_member.imageName);
+	imageFile.Open(imageName, CFile::modeReadWrite | CFile::typeBinary);
+
+	while(dwRead = imageFile.Read(imageData, 4096))
+	{
+		WriteCom((LPSTR)imageData, dwRead);
+	}
+	delete imageData;
+	imageFile.Close();
+}
 
 void CSerial::SetHwnd(HWND hwnd)
 {

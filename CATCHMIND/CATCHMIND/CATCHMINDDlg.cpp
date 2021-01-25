@@ -195,7 +195,7 @@ void CCATCHMINDDlg::OnProfile()
 	if(g_member.valid == FALSE)
 		return;
 
-	CProfileDlg profileDlg(NULL, g_member.name, g_member.id, g_member.imageName);
+	CProfileDlg profileDlg(g_member.name, g_member.id, g_member.imageName);
 	profileDlg.DoModal();
 }
 
@@ -210,9 +210,9 @@ void CCATCHMINDDlg::OnFriendView()
 
 void CCATCHMINDDlg::OnBnClickedBtnCapture()
 {
-	if(setCapturePath(this->m_hWnd))
+	if(g_captureManager.SetCapturePath(this->m_hWnd))
 	{
-		capture(this->m_hWnd);
+		g_captureManager.Capture(this->m_hWnd);
 	}
 }
 

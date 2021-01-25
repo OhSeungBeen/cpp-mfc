@@ -25,9 +25,6 @@ void CClientSocket::SendHeader(byte command, int dataSize)
 	header.startBit = 0x21;
 	header.dataSize = dataSize;
 	Send((char*)&header, sizeof(Header));
-
-	byte result;
-	Receive(&result, sizeof(byte));
 }
 
 
@@ -37,8 +34,17 @@ void CClientSocket::SendChatMsg( CString name, CString message )
 	ChatMessage chatMessage;
 	strcpy_s(chatMessage.name, name);
 	strcpy_s(chatMessage.message, message);
+
+	// SEND HEADER
 	SendHeader(MESSAGE, sizeof(ChatMessage));
+
+	// SEND BODY
 	Send((char*)&chatMessage, sizeof(ChatMessage));
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != MESSAGE)
+		AfxMessageBox("MESSAGE COM ERROR!!");
 }
 
 // Send Server My Profile
@@ -91,10 +97,16 @@ void CClientSocket::SendPoint(CPoint startPoint, CPoint endPoint, int thinkness,
 	point.thinkness = thinkness;
 	point.rgb = rgb;
 
+	// SEND HEADER
 	SendHeader(POINT, sizeof(Point));
+
+	// SEND BODY
 	Send(&point, sizeof(Point));
-	byte result;
-	Receive(&result, sizeof(byte));
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != POINT)
+		AfxMessageBox("POINT COM ERROR!!");
 }
 
 void CClientSocket::SendResponse(byte command, byte result)
@@ -127,12 +139,9 @@ void CClientSocket::OnReceive(int nErrorCode)
 	Header header;
 	Receive(&header, sizeof(Header));
 
-	byte result = 1;
-	Send(&result, sizeof(byte));
-
 	if(header.startBit != 0x21) // START BIT CHECK
 		return;
-	
+
 	switch(header.command)
 	{
 	case FULL_ROOM : 
@@ -188,25 +197,33 @@ void CClientSocket::OnReceive(int nErrorCode)
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_watingRoomDlg->NoticeAccept();
 
 			// SEND RESPONSE
-			SendResponse(ACCEPT, 0);
+			SendResponse(ACCEPT, 1);
 			break;
 		}
 	case MESSAGE :
 		{
+			//RECV BODY
 			ChatMessage chatMessage;
 			Receive((char*)&chatMessage, header.dataSize);
-			CString name = (LPSTR)chatMessage.name;
-			CString message = (LPSTR)chatMessage.message;
-			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_RECV_MESSAGE, (WPARAM)&name, (LPARAM)&message);
+
+			// LOGIC
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddMessageToList((LPSTR)chatMessage.name, (LPSTR)chatMessage.message);
+
+			// SEND RESPONSE
+			SendResponse(MESSAGE, 1);
 			break;
 		}
 	case POINT :
 		{
+			// RECV BODY
 			Point point;
 			Receive((char*)&point, header.dataSize);
-			SendMessage(((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->m_hWnd, WM_DRAW, 0, (LPARAM)&point);
-			byte result = 1;
-			Send(&result, sizeof(byte));
+
+			// LOGIC
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->Draw(&point);
+
+			// SEND RESPONSE
+			SendResponse(POINT, 1);
 			break;
 
 		}
@@ -220,11 +237,11 @@ void CClientSocket::OnReceive(int nErrorCode)
 			// RECV BODY IMAGE & LOGIC
 			ULONGLONG fileSize;
 			Receive(&fileSize, sizeof(ULONGLONG));
-			
+
 			byte* imageData = new byte[4096];
 			DWORD dwRead;
 			ULONGLONG receiveSize = 0;
-			
+
 			CString imageName = profile.imageName;
 			CString imagePath = "profileImage\\client\\" + imageName;
 			CFile file;
@@ -245,23 +262,26 @@ void CClientSocket::OnReceive(int nErrorCode)
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
 
 			break;
-			
+
 		}
 	case REQUEST_PROFILE:
 		{
+			// BODY X
+
+			// SEND RESULT RESPONSE
+			SendResponse(REQUEST_PROFILE, 1);
+
 			SendMyProfile();
-			//SendResponse(REQUEST_PROFILE, 1);
 			break;
 		}
-
 	case JOINED_NEW_USER_PROFILE :
 		{
-			// profile
+			// RECV PROFILE BODY
 			Profile profile;
 			Receive((char*)&profile, sizeof(Profile));
 			m_vProfile.push_back(profile);
 
-			// image save
+			// RECV IMAGE BODY & LOGIC
 			ULONGLONG fileSize;
 
 			Receive(&fileSize, sizeof(ULONGLONG));
@@ -282,32 +302,36 @@ void CClientSocket::OnReceive(int nErrorCode)
 					break;
 			}while(dwRead > 0);
 
-			byte result = 1;
-			Send(&result, sizeof(byte));
-
 			delete imageData;
 			file.Close();
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
-
+			// SEND RESULT RESPONSE
+			SendResponse(JOINED_NEW_USER_PROFILE, 1);
 			break;
 		}
 	case QUIZ :
 		{
 			// RECV BODY
 			m_quiz = RecvString(header.dataSize);
-			
-			// ROGIC
+
+			// LOGIC
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetQuiz(m_quiz);
-			
+
 			// SEND RESULT RESPONSE
 			SendResponse(QUIZ, 1);
 			break;
 		}
 	case CHANGE_MODE :
 		{
+			// RECV BODY
 			int mode;
 			Receive(&mode, header.dataSize);
+
+			// LOGIC
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(mode);
+
+			// SEND RESULT RESPONSE
+			SendResponse(CHANGE_MODE, 1);
 			break;
 		}
 	}

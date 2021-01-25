@@ -9,7 +9,7 @@ class CProfileDlg : public CDialog
 	DECLARE_DYNAMIC(CProfileDlg)
 
 public:
-	CProfileDlg(CWnd* pParent, CString name, CString id, CString imageName );   // 표준 생성자입니다.
+	CProfileDlg(CString name, CString id, CString imageName );   // 표준 생성자입니다.
 	virtual ~CProfileDlg();
 
 // 대화 상자 데이터입니다.

@@ -364,8 +364,16 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Log"
+				Name="Utill"
 				>
+				<File
+					RelativePath=".\Capture.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Capture.h"
+					>
+				</File>
 				<File
 					RelativePath=".\Log.cpp"
 					>

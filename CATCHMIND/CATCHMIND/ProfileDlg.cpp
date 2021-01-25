@@ -10,8 +10,8 @@
 
 IMPLEMENT_DYNAMIC(CProfileDlg, CDialog)
 
-CProfileDlg::CProfileDlg(CWnd* pParent /*=NULL*/,CString name, CString id, CString imageName )
-	: CDialog(CProfileDlg::IDD, pParent)
+CProfileDlg::CProfileDlg(CString name, CString id, CString imageName )
+	: CDialog(CProfileDlg::IDD)
 {
 	m_name = name;
 	m_id = id;

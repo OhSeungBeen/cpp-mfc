@@ -74,6 +74,7 @@
 #define IDC_BTN_PROFILE                 1030
 #define IDC_BUTTON1                     1031
 #define IDC_BTN_GAME_START              1031
+#define IDC_BTN_CLEAR                   1031
 #define IDC_STATIC_PANEL                1032
 #define IDC_COMBO_THINKNESS             1033
 #define IDC_COMBO_THINKNESS2            1034
@@ -97,6 +98,8 @@
 #define IDD_CREATE_IPADDRESS            1053
 #define IDC_EDIT1                       1054
 #define IDC_EDIT_QUIZ                   1054
+#define IDC_BUTTON2                     1055
+#define IDC_BTN_SERIAL_MODE_ORDER       1055
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_PRFILE                       32773
@@ -109,7 +112,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        139
 #define _APS_NEXT_COMMAND_VALUE         32776
-#define _APS_NEXT_CONTROL_VALUE         1055
+#define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

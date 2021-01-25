@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include "Data.h"
 // CSerial 명령 대상입니다.
 
 class CSerial : public CCmdTarget
@@ -22,6 +24,8 @@ public:
 	
 	HWND m_hWnd;
 
+	std::vector<Profile> m_vProfile;
+
 	void SetComPort(CString port, DWORD baudRate, BYTE dataBit, BYTE stopBit, BYTE parity);
 	void SetHwnd(HWND hwnd);
 	BOOL CreateComInfo();
@@ -34,6 +38,9 @@ public:
 	void WriteHeader(byte command, int dataSize);
 	void WritePoint(CPoint startPoint, CPoint endPoint, int thinkness, COLORREF rgb);
 	void WriteChatMessage(CString name, CString message);
+	void WriteProfile(byte command);
+	void WriteMode(int mode);
+	void WriteQuiz(CString quiz);
 };
 
 DWORD ComThread(LPVOID lpData);

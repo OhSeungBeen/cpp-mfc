@@ -22,7 +22,7 @@ public:
 	CObList* m_pServerSocketList;
 	std::vector<Profile>* m_vProfile;
 	Profile m_profile;
-	
+
 	void SendHeader(byte command, int dataSize);
 	void SendResponse(byte command, byte result);
 	void SendFullRoom();
@@ -37,10 +37,8 @@ public:
 	void SendOtherChatMsg(CString name, CString message);
 	void SendOtherMode(int mode);
 	void SendOhterQuiz(CString quiz);
-
 	void RequestProfile();
 
-	
 	CString RecvString(int dataSize);
 	Response RecvResponse();
 	virtual void OnReceive(int nErrorCode);

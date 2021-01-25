@@ -6,6 +6,7 @@
 #include "ListenSocket.h"
 #include "DataBase.h"
 #include "Log.h"
+#include "Capture.h"
 #include "Data.h"
 #include "Serial.h"
 #include <gdiplus.h>
@@ -26,10 +27,6 @@ extern std::vector<Member> g_vMember;
 // Log
 extern CLog g_logManager;
 
+extern CCapture g_captureManager;
 
-extern CString g_capturePath;
-extern CString g_captureName;
-extern void capture(HWND hwnd);
-extern BOOL setCapturePath(HWND hwnd);
-extern void DeleteAllFiles(CString dirName);
 #endif
