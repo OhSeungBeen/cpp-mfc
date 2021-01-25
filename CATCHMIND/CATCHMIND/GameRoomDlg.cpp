@@ -124,12 +124,12 @@ void CGameRoomDlg::OnBnClickedBtnSendMessage()
 		{
 			CString newQuiz = g_dataBase.SelectRandomQuiz();
 			
-			g_serial.WriteQuiz(newQuiz);
-			g_serial.WriteMode(0);
-
 			CString managerName = "MANAGER";
 			message.Format("* * *%s Answer!! : %s * * *",g_member.name, message);
 			g_serial.WriteChatMessage(managerName, message);
+
+			g_serial.WriteQuiz(newQuiz);
+			g_serial.WriteMode(0);
 
 			SetQuiz(newQuiz);
 			SetMode(1);

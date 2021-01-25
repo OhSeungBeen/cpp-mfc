@@ -134,7 +134,7 @@ BOOL CSerial::DestoryCom()
 
 DWORD ComThread(LPVOID lpData)
 {
-	DWORD dwEvtMask; 
+	//DWORD dwEvtMask; 
 	OVERLAPPED os; 
 	CSerial* pSerial = (CSerial*)lpData; 
 
@@ -152,10 +152,10 @@ DWORD ComThread(LPVOID lpData)
 		return FALSE;
 	while (pSerial->m_connected) 
 	{ 
-		dwEvtMask = 0; 
+		/*dwEvtMask = 0; 
 		WaitCommEvent(pSerial->m_comHandle, &dwEvtMask, NULL); 
 		if ((dwEvtMask & EV_RXCHAR) == EV_RXCHAR) 
-		{ 
+		{ */
 			Header header;
 			if(pSerial->ReadCom((char*)&header, sizeof(Header))) 
 			{
@@ -188,22 +188,26 @@ DWORD ComThread(LPVOID lpData)
 
 						byte* imageData = new byte[4096];
 						DWORD dwRead;
-						ULONGLONG receiveSize = 0;
-
+						ULONGLONG imageSize = 0 , recvSize = 0;
+						
 						CString imageName = profile.imageName;
 						CString imagePath = "profileImage\\client\\" + imageName;
 						CFile file;
 						file.Open(imagePath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
-						while(dwRead = pSerial->ReadCom((LPSTR)imageData, 4096))
+						
+						pSerial->ReadCom((LPSTR)&imageSize, sizeof(ULONGLONG));
+						while(recvSize != imageSize)
 						{
+							dwRead = pSerial->ReadCom((LPSTR)imageData, 4096);
 							file.Write(imageData, dwRead);
+							recvSize += dwRead;
 						}
 
 						delete imageData;
 						file.Close();
 						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->AddProfileToList(&profile);
 
-						//g_serial.WriteProfile(PROFILE_RECV_FROM_CLIENT);
+						g_serial.WriteProfile(PROFILE_RECV_FROM_CLIENT);
 						break;
 					}
 				case PROFILE_RECV_FROM_CLIENT :
@@ -215,14 +219,18 @@ DWORD ComThread(LPVOID lpData)
 
 						byte* imageData = new byte[4096];
 						DWORD dwRead;
+						ULONGLONG imageSize = 0 , recvSize = 0;
 
 						CString imageName = profile.imageName;
 						CString imagePath = "profileImage\\client\\" + imageName;
 						CFile file;
 						file.Open(imagePath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
-						while(dwRead = pSerial->ReadCom((LPSTR)imageData, 4096))
+						pSerial->ReadCom((LPSTR)&imageSize, sizeof(ULONGLONG));
+						while(recvSize != imageSize)
 						{
+							dwRead = pSerial->ReadCom((LPSTR)imageData, 4096);
 							file.Write(imageData, dwRead);
+							recvSize += dwRead;
 						}
 
 						delete imageData;
@@ -246,7 +254,7 @@ DWORD ComThread(LPVOID lpData)
 						pSerial->ReadCom(pChar, header.dataSize);
 						CString quiz = (LPSTR)pChar;
 						delete[] pChar;
-
+						
 						// LOGIC
 						((CCATCHMINDDlg*)(AfxGetApp()->GetMainWnd()))->m_gameRoomDlg->SetQuiz(quiz);
 
@@ -255,8 +263,8 @@ DWORD ComThread(LPVOID lpData)
 				}
 			}
 		} 
-	} 
-	CloseHandle( os.hEvent ) ; 
+	//} 
+//	CloseHandle( os.hEvent ) ; 
 	return TRUE;
 }
 
@@ -354,7 +362,7 @@ void CSerial::WriteMode(int mode)
 	// SEND HEADER
 	WriteHeader(CHANGE_MODE, sizeof(int));
 	// SEND BODY
-	WriteCom((LPSTR)&mode, sizeof(int));
+	WriteCom((char*)&mode, sizeof(int));
 }
 
 // Write Profile (Draw)
@@ -378,10 +386,14 @@ void CSerial::WriteProfile(byte command)
 	CString imageName;
 	imageName.Format("profileImage\\%s", g_member.imageName);
 	imageFile.Open(imageName, CFile::modeReadWrite | CFile::typeBinary);
+	
+	ULONGLONG imageSize = imageFile.GetLength();
+	WriteCom((char*)&imageSize, sizeof(ULONGLONG));
 
 	while(dwRead = imageFile.Read(imageData, 4096))
 	{
 		WriteCom((LPSTR)imageData, dwRead);
+		memset(imageData, 0, 4096);
 	}
 	delete imageData;
 	imageFile.Close();

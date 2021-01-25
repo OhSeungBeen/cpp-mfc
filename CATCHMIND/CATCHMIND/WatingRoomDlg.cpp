@@ -147,14 +147,15 @@ void CWatingRoomDlg::OnBnClickedBtnCreateRoomSerial()
 			
 			CString quiz = g_dataBase.SelectRandomQuiz();
 
-			//g_serial.WriteProfile(JOINED_NEW_USER_PROFILE);
-			
-			AfxMessageBox("CREATE NOMAL MODE ROOM(SERIAL) SUCCESS");
-			g_logManager.Log("CREATE NOMAL MODE ROOM(SERIAL) SUCCESS");
+			g_serial.WriteProfile(JOINED_NEW_USER_PROFILE);
+
 			((CCATCHMINDDlg*)GetParent())->ChangeDlg(WATING_ROOM, GAME_ROOM);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(1);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->GetDlgItem(IDC_BTN_SERIAL_MODE_ORDER)->ShowWindow(TRUE);
+
+			AfxMessageBox("CREATE NOMAL MODE ROOM(SERIAL) SUCCESS");
+			g_logManager.Log("CREATE NOMAL MODE ROOM(SERIAL) SUCCESS");
 		}
 		else
 		{
