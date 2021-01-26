@@ -26,6 +26,7 @@ public:
 	void SendAllPoint(CPoint startPoint, CPoint endPoint, int thinkness, COLORREF rgb);
 	void SendAllQuiz(CString quiz);
 	void SendAllMode(int mode);
+	void SendAllClear();
 };
 
 

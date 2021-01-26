@@ -98,3 +98,14 @@ void CListenSocket::SendAllMode(int mode)
 		serverSocket->SendMode(mode);
 	}
 }
+
+// Send All Client Clear
+void CListenSocket::SendAllClear()
+{
+	POSITION pos = m_pServerSocketList.GetHeadPosition();
+	while (pos != NULL) 
+	{
+		CServerSocket* serverSocket = (CServerSocket*)m_pServerSocketList.GetNext(pos);
+		serverSocket->SendClear();
+	}
+}

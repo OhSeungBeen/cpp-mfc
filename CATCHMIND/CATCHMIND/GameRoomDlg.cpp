@@ -14,6 +14,12 @@ CGameRoomDlg::CGameRoomDlg(CWnd* pParent /*=NULL*/)
 	m_thickness = 1;
 	m_rgb = RGB(0, 0, 0);
 	m_mode = 1;
+
+	m_miliseconds = 0;
+	m_seconds = 30;
+	m_minute = 1;
+	m_hour = 0;
+	m_preMilliSec = 0;
 }
 
 CGameRoomDlg::~CGameRoomDlg()
@@ -41,6 +47,7 @@ BEGIN_MESSAGE_MAP(CGameRoomDlg, CDialog)
 	ON_WM_LBUTTONUP()
 	ON_BN_CLICKED(IDC_BTN_CLEAR, &CGameRoomDlg::OnBnClickedBtnClear)
 	ON_BN_CLICKED(IDC_BTN_SERIAL_MODE_ORDER, &CGameRoomDlg::OnBnClickedBtnSerialModeOrder)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 BOOL CGameRoomDlg::OnInitDialog()
@@ -60,6 +67,10 @@ BOOL CGameRoomDlg::OnInitDialog()
 	ctrl_comThinkness.AddString("4");
 	ctrl_comThinkness.AddString("5");
 	ctrl_comThinkness.SetCurSel(0);
+	
+
+	m_pTimeThread = AfxBeginThread(TimeThread, this);
+
 	return TRUE;
 }
 
@@ -248,7 +259,7 @@ void CGameRoomDlg::OnLButtonDown(UINT nFlags, CPoint point)
 
 	m_lButtonClick = TRUE;
 	//SetCapture();
-	m_prePoint = point;
+	m_startPoint = point;
 
 	CClientDC dc(this);
 
@@ -256,13 +267,9 @@ void CGameRoomDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	CRect rect;
 	GetDlgItem(IDC_STATIC_PANEL)->GetWindowRect(&rect);
 	ScreenToClient(&rect);
-	if(point.y < rect.top || point.y < rect.top)
+	if(point.y < rect.top || point.y > rect.bottom)
 		return;
-	if(point.y > rect.bottom || point.y > rect.bottom)
-		return;
-	if(point.x > rect.right || point.x > rect.right)
-		return;
-	if(point.x < rect.left || point.x < rect.left)
+	if(point.x > rect.right || point.x < rect.left)
 		return;
 
 	CPen pen;
@@ -272,17 +279,12 @@ void CGameRoomDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	dc.MoveTo(point);
 	dc.LineTo(point);
 
-
-
 	// TCP/IP
 	if(g_listenSocket.m_connected)// Server
-		g_listenSocket.SendAllPoint(m_prePoint, point, m_thickness, m_rgb);
-
-	if(g_clientSocket.m_connected) // Client
-		g_clientSocket.SendPoint(m_prePoint, point, m_thickness, m_rgb);
-
-	// Serial
-	if(g_serial.m_connected)
+		g_listenSocket.SendAllPoint(m_startPoint, point, m_thickness, m_rgb);
+	else if(g_clientSocket.m_connected) // Client
+		g_clientSocket.SendPoint(m_startPoint, point, m_thickness, m_rgb);
+	else if(g_serial.m_connected) // Serial
 		g_serial.WritePoint(point, point, m_thickness, m_rgb);
 
 	dc.SelectObject(oldPen);
@@ -304,43 +306,33 @@ void CGameRoomDlg::OnMouseMove(UINT nFlags, CPoint point)
 		CRect rect;
 		GetDlgItem(IDC_STATIC_PANEL)->GetWindowRect(&rect);
 		ScreenToClient(&rect);
-		if(m_prePoint.y < rect.top || m_prePoint.y < rect.top)
+		if(m_startPoint.y < rect.top || m_startPoint.y > rect.bottom)
 			return;
-		if(m_prePoint.y > rect.bottom || m_prePoint.y > rect.bottom)
+		if(m_startPoint.x > rect.right || m_startPoint.x < rect.left)
 			return;
-		if(m_prePoint.x > rect.right || m_prePoint.x > rect.right)
+		if(point.y < rect.top || point.y > rect.bottom)
 			return;
-		if(m_prePoint.x < rect.left || m_prePoint.x < rect.left)
-			return;
-		if(point.y < rect.top || point.y < rect.top)
-			return;
-		if(point.y > rect.bottom || point.y > rect.bottom)
-			return;
-		if(point.x > rect.right || point.x > rect.right)
-			return;
-		if(point.x < rect.left || point.x < rect.left)
+		if(point.x > rect.right || point.x < rect.left)
 			return;
 
 		CPen pen;
 		pen.CreatePen(PS_SOLID, m_thickness ,m_rgb);
 		CPen *oldPen=dc.SelectObject(&pen);
 
-		dc.MoveTo(m_prePoint);
+		dc.MoveTo(m_startPoint);
 		dc.LineTo(point);
+		
+		m_endPoint = point;
 
-		// TCP/IP
 		if(g_listenSocket.m_connected)// Server
-			g_listenSocket.SendAllPoint(m_prePoint, point, m_thickness, m_rgb);
+			g_listenSocket.SendAllPoint(m_startPoint, point, m_thickness, m_rgb);
+		else if(g_clientSocket.m_connected) // Client
+			g_clientSocket.SendPoint(m_startPoint, point, m_thickness, m_rgb);
+		else if(g_serial.m_connected) // Serial
+			g_serial.WritePoint(m_startPoint, point, m_thickness, m_rgb);
 
-		if(g_clientSocket.m_connected) // Client
-			g_clientSocket.SendPoint(m_prePoint, point, m_thickness, m_rgb);
-
-		// Serial
-		if(g_serial.m_connected)
-			g_serial.WritePoint(m_prePoint, point, m_thickness, m_rgb);
-
-		/*dc.SelectObject(oldPen);*/
-		m_prePoint = point;
+		dc.SelectObject(oldPen);
+		m_startPoint = point;
 	}
 	CDialog::OnMouseMove(nFlags, point);
 }
@@ -349,6 +341,7 @@ void CGameRoomDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CGameRoomDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	m_lButtonClick = FALSE;
+	
 	//ReleaseCapture();
 	CDialog::OnLButtonUp(nFlags, point);
 }
@@ -426,9 +419,24 @@ BOOL CGameRoomDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
+void CGameRoomDlg::Clear()
+{
+	Invalidate(TRUE);
+}
+
 void CGameRoomDlg::OnBnClickedBtnClear()
 {
-	CClientDC dc(this);
+	// TCP/IP
+	if(g_listenSocket.m_connected)// Server
+		g_listenSocket.SendAllClear();
+
+	if(g_clientSocket.m_connected) // Client
+		g_clientSocket.SendClear();
+
+	// Serial
+	//if(g_serial.m_connected)
+
+	Invalidate(TRUE);
 }
 
 
@@ -442,3 +450,46 @@ void CGameRoomDlg::OnBnClickedBtnSerialModeOrder()
 	GetDlgItem(IDC_BTN_SERIAL_MODE_ORDER)->ShowWindow(FALSE);
 	SetDlgItemText(IDC_EDIT_QUIZ, quiz);
 }
+
+void CGameRoomDlg::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	// 그리기 메시지에 대해서는 CDialog::OnPaint()을(를) 호출하지 마십시오.
+}
+
+UINT TimeThread(LPVOID pParam) 
+{                           
+	CGameRoomDlg* gameRoomDlg = (CGameRoomDlg*)pParam;
+
+	SYSTEMTIME currTime;
+	CString time;
+
+	while(TRUE)
+	{	
+
+		GetLocalTime(&currTime); 
+
+		gameRoomDlg->m_nowMilliSec = currTime.wMilliseconds;
+		gameRoomDlg->m_miliseconds -= abs(gameRoomDlg->m_nowMilliSec - gameRoomDlg->m_preMilliSec);
+		gameRoomDlg->m_preMilliSec = gameRoomDlg->m_nowMilliSec;
+
+		if(gameRoomDlg->m_miliseconds <= 0)
+		{
+			gameRoomDlg->m_miliseconds = 1000;
+			gameRoomDlg->m_seconds--;
+		}
+
+		if(gameRoomDlg->m_seconds <= 0)
+		{
+			gameRoomDlg->m_seconds = 60;
+			gameRoomDlg->m_minute--;
+		}
+
+		time.Format("%02d:%02d.%01d", gameRoomDlg->m_minute, gameRoomDlg->m_seconds, gameRoomDlg->m_miliseconds / 10);
+		gameRoomDlg->SetDlgItemText(IDC_STATIC_TIME, time);
+		Sleep(10);
+	}
+	return 0;
+}
+

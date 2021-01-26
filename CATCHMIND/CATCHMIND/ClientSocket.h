@@ -13,6 +13,7 @@
 #define PROFILE_RECV_FROM_CLIENT 0x48
 #define QUIZ 0x49
 #define CHANGE_MODE 0x50
+#define CLEAR 0x51
 
 class CClientSocket : public CSocket
 {
@@ -29,6 +30,8 @@ public:
 	void SendChatMsg(CString name, CString message);
 	void SendMyProfile();
 	void SendResponse(byte command, byte result);
+	void SendClear();
+
 	CString RecvString(int dataSize);
 	Response RecvResponse();
 	virtual void OnReceive(int nErrorCode);

@@ -109,6 +109,19 @@ void CClientSocket::SendPoint(CPoint startPoint, CPoint endPoint, int thinkness,
 		AfxMessageBox("POINT COM ERROR!!");
 }
 
+void CClientSocket::SendClear()
+{
+	// SEND HEADER
+	SendHeader(CLEAR, 0);
+
+	// BODY X
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != CLEAR)
+		AfxMessageBox("CLEAR COM ERROR!!");
+}
+
 void CClientSocket::SendResponse(byte command, byte result)
 {
 	Response response;
@@ -138,6 +151,9 @@ void CClientSocket::OnReceive(int nErrorCode)
 	// HEADER RECV
 	Header header;
 	Receive(&header, sizeof(Header));
+
+	int result = 1;
+	Send(&result, sizeof(int));
 
 	if(header.startBit != 0x21) // START BIT CHECK
 		return;
@@ -332,6 +348,15 @@ void CClientSocket::OnReceive(int nErrorCode)
 
 			// SEND RESULT RESPONSE
 			SendResponse(CHANGE_MODE, 1);
+			break;
+		}
+	case CLEAR :
+		{
+			// LOGIC
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->Clear();
+
+			// SEND RESULT RESPONSE
+			SendResponse(CLEAR, 1);
 			break;
 		}
 	}

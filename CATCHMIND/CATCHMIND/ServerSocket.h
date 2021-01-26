@@ -12,6 +12,7 @@
 #define PROFILE_RECV_FROM_CLIENT 0x48
 #define QUIZ 0x49
 #define CHANGE_MODE 0x50
+#define CLEAR 0x51
 
 class CServerSocket : public CSocket
 {
@@ -31,12 +32,16 @@ public:
 	void SendChatMsg(CString name, CString message);
 	void SendQuiz(CString quiz);
 	void SendProfiles();
-	void SendOtherProfile(Profile profile);
 	void SendPoint(CPoint startPoint, CPoint endPoint, int thinkness, COLORREF rgb);
 	void SendMode(int mode);
+	void SendClear();
+	
+	void SendOtherProfile(Profile profile);
 	void SendOtherChatMsg(CString name, CString message);
 	void SendOtherMode(int mode);
 	void SendOhterQuiz(CString quiz);
+	void SendOhterClear();
+
 	void RequestProfile();
 
 	CString RecvString(int dataSize);

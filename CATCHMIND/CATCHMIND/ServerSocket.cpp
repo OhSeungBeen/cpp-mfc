@@ -27,6 +27,9 @@ void CServerSocket::SendHeader(byte command, int dataSize)
 	header.command = command;
 	header.dataSize = dataSize;
 	Send((char*)&header, sizeof(Header));
+
+	int result;
+	Receive(&result, sizeof(int));
 }
 
 void CServerSocket::SendResponse(byte command, byte result)
@@ -145,6 +148,31 @@ void CServerSocket::SendQuiz(CString quiz)
 		AfxMessageBox("QUIZ COM ERROR!!");
 
 	delete[] pQuiz;
+}
+
+void CServerSocket::SendClear()
+{
+	// SEND HEADER
+	SendHeader(CLEAR, 0);
+	
+	// BODY X
+
+	// RECV RESULT RESPONSE
+	Response response = RecvResponse();
+	if(response.command != CLEAR)
+		AfxMessageBox("CLEAR COM ERROR!!");
+}
+
+// Send OtherClient Clear
+void CServerSocket::SendOhterClear()
+{
+	POSITION pos = m_pServerSocketList->GetHeadPosition();
+	while (pos != NULL)
+	{
+		CServerSocket* serverSocket = (CServerSocket*)m_pServerSocketList->GetNext(pos);
+		if(serverSocket == this) continue;
+		serverSocket->SendClear();
+	}
 }
 
 // Send OtherClient Chatting Message
@@ -426,6 +454,15 @@ void CServerSocket::OnReceive(int nErrorCode)
 			SendResponse(JOINED_NEW_USER_PROFILE, 1);
 
 			SendOtherProfile(profile);
+			break;
+		}
+	case CLEAR :
+		{
+			// LOGIC
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->Clear();
+			// SEND RESULT RESPONSE
+			SendResponse(CLEAR, 1);
+			SendOhterClear();
 			break;
 		}
 	}
