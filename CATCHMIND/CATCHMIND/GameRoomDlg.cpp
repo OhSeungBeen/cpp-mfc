@@ -3,7 +3,7 @@
 #include "GameRoomDlg.h"
 #include "Global.h"
 #include "ProfileDlg.h"
-
+#include "GameRoomProfileDlg.h"
 
 IMPLEMENT_DYNAMIC(CGameRoomDlg, CDialog)
 
@@ -31,7 +31,7 @@ void CGameRoomDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_MESSAGE, ctrl_listChatMsg);
-	DDX_Control(pDX, IDC_LIST_USER, ctrl_listProfile);
+	//DDX_Control(pDX, IDC_LIST_USER, ctrl_listProfile);
 	DDX_Control(pDX, IDC_COMBO_THINKNESS, ctrl_comThinkness);
 	DDX_Control(pDX, IDC_COMBO_COLOR, ctrl_comColor);
 	DDX_Control(pDX, IDC_EDIT_QUIZ, ctrl_editQuiz);
@@ -46,13 +46,37 @@ BEGIN_MESSAGE_MAP(CGameRoomDlg, CDialog)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
 	ON_BN_CLICKED(IDC_BTN_CLEAR, &CGameRoomDlg::OnBnClickedBtnClear)
-	ON_BN_CLICKED(IDC_BTN_SERIAL_MODE_ORDER, &CGameRoomDlg::OnBnClickedBtnSerialModeOrder)
 	ON_WM_PAINT()
+	ON_BN_CLICKED(IDD_BTN_GAME_START, &CGameRoomDlg::OnBnClickedBtnGameStart)
 END_MESSAGE_MAP()
 
 BOOL CGameRoomDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+	
+	CGameRoomProfileDlg* gameRoomProfileDlg = new CGameRoomProfileDlg;
+	gameRoomProfileDlg->Create(CGameRoomProfileDlg::IDD, this);
+	gameRoomProfileDlg->MoveWindow(0, 25, 150, 190);
+	gameRoomProfileDlg->ShowWindow( SW_SHOW );
+	m_gameRoomProfileDlg[0] = gameRoomProfileDlg;
+
+	CGameRoomProfileDlg* gameRoomProfileDlg2 = new CGameRoomProfileDlg;
+	gameRoomProfileDlg2->Create(CGameRoomProfileDlg::IDD, this);
+	gameRoomProfileDlg2->MoveWindow(660, 25, 150, 190);
+	gameRoomProfileDlg2->ShowWindow( SW_SHOW );
+	m_gameRoomProfileDlg[1] = gameRoomProfileDlg2;
+
+	CGameRoomProfileDlg* gameRoomProfileDlg3 = new CGameRoomProfileDlg;
+	gameRoomProfileDlg3->Create(CGameRoomProfileDlg::IDD, this);
+	gameRoomProfileDlg3->MoveWindow(0, 215, 150, 190);
+	gameRoomProfileDlg3->ShowWindow( SW_SHOW );
+	m_gameRoomProfileDlg[2] = gameRoomProfileDlg3;
+
+	CGameRoomProfileDlg* gameRoomProfileDlg4 = new CGameRoomProfileDlg;
+	gameRoomProfileDlg4->Create(CGameRoomProfileDlg::IDD, this);
+	gameRoomProfileDlg4->MoveWindow(660, 215, 150, 190);
+	gameRoomProfileDlg4->ShowWindow( SW_SHOW );
+	m_gameRoomProfileDlg[3] = gameRoomProfileDlg4;
 
 	ctrl_comColor.AddString("검정");
 	ctrl_comColor.AddString("파랑");
@@ -68,8 +92,16 @@ BOOL CGameRoomDlg::OnInitDialog()
 	ctrl_comThinkness.AddString("5");
 	ctrl_comThinkness.SetCurSel(0);
 	
-
-	m_pTimeThread = AfxBeginThread(TimeThread, this);
+	CFont fnt;
+	LOGFONT lf;
+	::ZeroMemory(&lf, sizeof(lf));
+	lf.lfHeight = 30;
+	lf.lfWeight = FW_BOLD;
+	::lstrcpy(lf.lfFaceName, "Tahoma");
+	fnt.CreateFontIndirect(&lf);
+	GetDlgItem(IDC_STATIC_TIME)->SetFont(&fnt);
+	GetDlgItem(IDC_EDIT_QUIZ)->SetFont(&fnt);
+	fnt.Detach();
 
 	return TRUE;
 }
@@ -169,11 +201,27 @@ void CGameRoomDlg::AddMessageToList(CString name, CString message)
 }
 
 
+// Add One User Profile To List
+void CGameRoomDlg::RefreshProfileView()
+{
+	if(g_listenSocket.m_connected)
+	{
+		std::vector<Profile> vProfile = g_listenSocket.m_vProfile;
+		for(size_t i = 0; i < vProfile.size(); i++)
+		{
+			m_gameRoomProfileDlg[i]->SetProfile(vProfile[i].name, vProfile[i].imageName);
+		}
+	}
+	else if(g_clientSocket.m_connected)
+	{
+		
+	}
+}
 
 // Add One User Profile To List
 void CGameRoomDlg::AddProfileToList(Profile* profile)
 {
-	ctrl_listProfile.AddString(profile->name);
+//	ctrl_listProfile.AddString(profile->name);
 }
 
 // Add User Profiles To List
@@ -181,14 +229,15 @@ void CGameRoomDlg::AddProfilesToList(std::vector<Profile>* vProfile)
 {
 	for(size_t i = 0; i < vProfile->size(); i++)
 	{
-		ctrl_listProfile.AddString(vProfile->at(i).name);
+//		ctrl_listProfile.AddString(vProfile->at(i).name);
 	}
 }
 
 // Profile Button Event
 void CGameRoomDlg::OnBnClickedBtnProfile()
 {
-	int index = ctrl_listProfile.GetCurSel();
+//	int index = ctrl_listProfile.GetCurSel();
+	int index = 0;
 	if(index == -1)
 	{
 		AfxMessageBox("PLEASE SELECT USER");
@@ -365,7 +414,7 @@ void CGameRoomDlg::SetMode(int mode)
 	{
 		SetDlgItemText(IDC_STATIC_MODE, "그림을 보고 문제를 맞히세요!");
 		GetDlgItem(IDC_EDIT_QUIZ)->ShowWindow(FALSE);
-		GetDlgItem(IDC_BTN_SERIAL_MODE_ORDER)->ShowWindow(FALSE);
+		GetDlgItem(IDD_BTN_GAME_START)->ShowWindow(FALSE);
 	}
 }
 
@@ -442,13 +491,7 @@ void CGameRoomDlg::OnBnClickedBtnClear()
 
 void CGameRoomDlg::OnBnClickedBtnSerialModeOrder()
 {
-	CString quiz = g_dataBase.SelectRandomQuiz();
-
-	g_serial.WriteMode(0);
-	g_serial.WriteQuiz(quiz);
-
-	GetDlgItem(IDC_BTN_SERIAL_MODE_ORDER)->ShowWindow(FALSE);
-	SetDlgItemText(IDC_EDIT_QUIZ, quiz);
+	
 }
 
 void CGameRoomDlg::OnPaint()
@@ -467,7 +510,6 @@ UINT TimeThread(LPVOID pParam)
 
 	while(TRUE)
 	{	
-
 		GetLocalTime(&currTime); 
 
 		gameRoomDlg->m_nowMilliSec = currTime.wMilliseconds;
@@ -493,3 +535,23 @@ UINT TimeThread(LPVOID pParam)
 	return 0;
 }
 
+
+void CGameRoomDlg::OnBnClickedBtnGameStart()
+{
+	CString quiz = g_dataBase.SelectRandomQuiz();
+
+	if(g_listenSocket.m_connected)
+	{
+
+	}
+	else if(g_serial.m_connected)
+	{
+		g_serial.WriteMode(0);
+		g_serial.WriteQuiz(quiz);
+
+		m_pTimeThread = AfxBeginThread(TimeThread, this);
+
+		GetDlgItem(IDC_BTN_START_GAME)->ShowWindow(FALSE);
+		SetDlgItemText(IDC_EDIT_QUIZ, quiz);
+	}
+}

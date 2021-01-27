@@ -2,6 +2,7 @@
 #include "afxwin.h"
 #include "Data.h"
 #include <vector>
+#include "GameRoomProfileDlg.h"
 
 // CGameRoomDlg 대화 상자입니다.
 
@@ -29,7 +30,7 @@ public:
 	int m_mode;
 
 	CListBox ctrl_listChatMsg;
-	CListBox ctrl_listProfile;
+	//CListBox ctrl_listProfile;
 	CComboBox ctrl_comThinkness;
 	CComboBox ctrl_comColor;
 	CEdit ctrl_editQuiz;
@@ -43,6 +44,8 @@ public:
 
 	CWinThread* m_pTimeThread;
 
+	CGameRoomProfileDlg* m_gameRoomProfileDlg[4];
+
 	virtual BOOL OnInitDialog();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -53,6 +56,7 @@ public:
 	void SetQuiz(CString quiz);
 	void Draw(Point* point);
 	void Clear();
+	void RefreshProfileView();
 
 	afx_msg void OnBnClickedBtnSendMessage();
 	afx_msg void OnBnClickedBtnProfile();
@@ -65,9 +69,9 @@ public:
 	afx_msg void OnCbnSelchangeComboColor();
 	afx_msg void OnBnClickedBtnClear();
 	afx_msg void OnBnClickedBtnSerialModeOrder();
-
 	afx_msg LRESULT OnDisConnect( WPARAM wParam, LPARAM lParam );
-
 	afx_msg void OnPaint();
+	afx_msg void OnBnClickedBtnGameStart();
 };
-UINT TimeThread(LPVOID pParam) /* 반드시 UNIT형?반환해야되고 LPVOID형의 포인터를 인자 ?받아야한다. */;
+
+UINT TimeThread(LPVOID pParam);

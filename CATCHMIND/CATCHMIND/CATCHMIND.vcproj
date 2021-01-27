@@ -263,6 +263,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\GameRoomProfileDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\GameRoomProfileDlg.h"
+					>
+				</File>
+				<File
 					RelativePath=".\LoginDlg.cpp"
 					>
 				</File>

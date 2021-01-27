@@ -22,9 +22,9 @@
 #define IDD_LOGIN_DIALOG                134
 #define IDD_PASSWORD_DIALOG             135
 #define IDD_FRIEND_DIALOG               136
-#define IDD_BTN_SCERIAL                 138
 #define IDD_ROOM_SERIAL_DIALOG          139
 #define IDD_JOIN_ROOM_DIALOG            140
+#define IDD_GAMEROOM_PROFILE            141
 #define IDC_EDIT_LOGIN_ID               1000
 #define IDD_EDIT_LOGIN_ID               1000
 #define IDC_EDIT_LOGIN_PW               1001
@@ -72,8 +72,6 @@
 #define IDC_BTN_SEND_MESSAGE            1028
 #define IDC_LIST_USER                   1029
 #define IDC_BTN_PROFILE                 1030
-#define IDC_BUTTON1                     1031
-#define IDC_BTN_GAME_START              1031
 #define IDC_BTN_CLEAR                   1031
 #define IDC_STATIC_PANEL                1032
 #define IDC_COMBO_THINKNESS             1033
@@ -100,6 +98,10 @@
 #define IDC_EDIT_QUIZ                   1054
 #define IDC_BTN_SERIAL_MODE_ORDER       1055
 #define IDC_STATIC_TIME                 1056
+#define IDD_BTN_GAME_START              1057
+#define IDC_BTN_START_GAME              1057
+#define IDC_PIC_ROOM_IMAGE              1057
+#define IDC_PIC_GAMEROOM_IMAGE          1057
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_PRFILE                       32773
@@ -110,9 +112,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        139
+#define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         32776
-#define _APS_NEXT_CONTROL_VALUE         1057
+#define _APS_NEXT_CONTROL_VALUE         1058
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

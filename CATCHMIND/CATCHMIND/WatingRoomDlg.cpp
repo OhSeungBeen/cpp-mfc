@@ -33,6 +33,19 @@ END_MESSAGE_MAP()
 BOOL CWatingRoomDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+
+	CFont fnt;
+	LOGFONT lf;
+	::ZeroMemory(&lf, sizeof(lf));
+	lf.lfHeight = 20;
+	lf.lfWeight = FW_BOLD;
+	::lstrcpy(lf.lfFaceName, "Tahoma");
+	fnt.CreateFontIndirect(&lf);
+	GetDlgItem(IDC_BTN_CREATE_ROOM)->SetFont(&fnt);
+	GetDlgItem(IDC_BTN_JOIN_ROOM)->SetFont(&fnt);
+	GetDlgItem(IDC_BTN_CREATE_ROOM_SERIAL)->SetFont(&fnt);
+	fnt.Detach();
+
 	return TRUE;
 }
 
@@ -59,10 +72,9 @@ void CWatingRoomDlg::OnBnClickedBtnCreateRoom()
 			strcpy_s(profile.imageName, g_member.imageName);
 			g_listenSocket.m_vProfile.push_back(profile);
 			
-			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
-			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(1);
-			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetQuiz(quiz);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->ChangeDlg(WATING_ROOM, GAME_ROOM);
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->RefreshProfileView();
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->GetDlgItem(IDC_BTN_START_GAME)->ShowWindow(TRUE);
 
 			AfxMessageBox("ROOM CREATE SUCCESS");
 			g_logManager.Log("ROOM CREATE SUCCESS");
@@ -118,8 +130,8 @@ void CWatingRoomDlg::NoticeAccept()
 	
 
 	((CCATCHMINDDlg*)AfxGetMainWnd())->ChangeDlg(WATING_ROOM, GAME_ROOM);
-	((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(0);
-	((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
+	//((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(0);
+	//((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
 
 	AfxMessageBox("ROOM JOIN SUCCESS");
 	g_logManager.Log("ROOM JOIN SUCCESS");
@@ -152,7 +164,7 @@ void CWatingRoomDlg::OnBnClickedBtnCreateRoomSerial()
 			((CCATCHMINDDlg*)GetParent())->ChangeDlg(WATING_ROOM, GAME_ROOM);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->AddProfileToList(&profile);
 			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->SetMode(1);
-			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->GetDlgItem(IDC_BTN_SERIAL_MODE_ORDER)->ShowWindow(TRUE);
+			((CCATCHMINDDlg*)AfxGetMainWnd())->m_gameRoomDlg->GetDlgItem(IDC_BTN_START_GAME)->ShowWindow(TRUE);
 
 			AfxMessageBox("CREATE NOMAL MODE ROOM(SERIAL) SUCCESS");
 			g_logManager.Log("CREATE NOMAL MODE ROOM(SERIAL) SUCCESS");
